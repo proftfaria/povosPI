@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>História: Primeiras Comunidades</title>
+  <title>Cronos: História Ibérica</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap"
-    rel="stylesheet">
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Tailwind Config -->
   <script>
     tailwind.config = {
       theme: {
@@ -20,110 +25,67 @@
           },
           colors: {
             stone: {
-              50: '#fafaf9',
-              100: '#f5f5f4',
-              200: '#e7e5e4',
-              300: '#d6d3d1',
-              400: '#a8a29e',
-              500: '#78716c',
-              600: '#57534e',
-              700: '#44403c',
-              800: '#292524',
-              900: '#1c1917',
+              50: '#fafaf9', 100: '#f5f5f4', 200: '#e7e5e4', 300: '#d6d3d1',
+              400: '#a8a29e', 500: '#78716c', 600: '#57534e', 700: '#44403c',
+              800: '#292524', 900: '#1c1917',
             },
             bronze: {
-              500: '#b45309',
-              600: '#92400e',
+              500: '#b45309', 600: '#92400e',
             },
-            parchment: '#fef3c7',
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.5s ease-out',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
           }
         }
       }
     }
   </script>
+
   <style>
-    body {
-      background-color: #fafaf9;
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #f5f5f4;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #d6d3d1;
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #a8a29e;
-    }
+    body { background-color: #fafaf9; }
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f5f5f4; }
+    ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+    
+    .hidden { display: none !important; }
   </style>
-  <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.2.0",
-        "react-dom": "https://esm.sh/react-dom@18.2.0",
-        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.344.0",
-        "recharts": "https://esm.sh/recharts@2.12.0?external=react,react-dom"
-      }
-    }
-    </script>
 </head>
+<body class="text-stone-800 antialiased min-h-screen flex flex-col">
+  
+  <div id="app" class="flex-1 flex flex-col">
+    <!-- O conteúdo será injetado aqui via JavaScript -->
+  </div>
 
-<body>
-  <div id="root"></div>
-
-  <script type="text/babel" data-type="module">
-    import React, { useState, useEffect, useMemo, useRef } from 'react';
-    import { createRoot } from 'react-dom/client';
-    import { Trophy, BookOpen, Clock, BarChart3, Award, Flame, Brain, CheckCircle, XCircle, Lightbulb, ArrowRight, ArrowLeft, RotateCcw, HelpCircle, AlertCircle, RefreshCw } from 'lucide-react';
-    import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
-
-    // --- TYPES & CONSTANTS ---
-    const QuestionType = {
-      MULTIPLE_CHOICE: 'multiple_choice',
-      MULTIPLE_SELECT: 'multiple_select',
-      DROPDOWN: 'dropdown',
-      MATCHING: 'matching',
-      ORDERING: 'ordering',
-      LABELING: 'labeling'
-    };
-
-    const Topic = {
-      HUNTER_GATHERERS: 'Comunidades Recoletoras',
-      AGROPASTORAL: 'Comunidades Agropastoris',
-      ART_MEGALITHISM: 'Arte e Megalitismo',
-      IBERIAN_PEOPLES: 'Povos Peninsulares',
-      MEDITERRANEAN_PEOPLES: 'Povos Mediterrâneos'
-    };
+  <script>
+    // ==========================================
+    // 1. DADOS (CONSTANTES & PERGUNTAS COMPLETAS)
+    // ==========================================
+    
+    const BADGES = [
+      { id: 'novice', name: 'Arqueólogo Iniciante', icon: '🏺', description: 'Completa 5 questões corretamente.' },
+      { id: 'expert', name: 'Historiador Expert', icon: '📜', description: 'Acumula mais de 500 pontos.' },
+      { id: 'perfect', name: 'Perfeccionista', icon: '🎯', description: 'Acerta 100% num modo de teste.' },
+      { id: 'streak', name: 'Em Chamas', icon: '🔥', description: 'Acerta 5 questões seguidas.' },
+    ];
 
     const MODES = [
-      { id: 'study', name: 'Modo Estudo', icon: <BookOpen className="w-5 h-5" />, desc: 'Feedback imediato e explicações' },
-      { id: 'test', name: 'Modo Teste', icon: <Clock className="w-5 h-5" />, desc: 'Sem feedback, com temporizador (10 min)' },
-      { id: 'dashboard', name: 'Meu Progresso', icon: <BarChart3 className="w-5 h-5" />, desc: 'Estatísticas e conquistas' },
+      { id: 'study', name: 'Modo Estudo', icon: 'book-open', desc: 'Feedback imediato e dicas progressivas.' },
+      { id: 'test', name: 'Modo Teste', icon: 'clock', desc: 'Sem feedback, com temporizador (10 min).' },
+      { id: 'dashboard', name: 'Meu Progresso', icon: 'bar-chart-3', desc: 'Estatísticas e conquistas.' },
     ];
 
-    const BADGES = [
-      { id: 'novice', name: 'Arqueólogo Iniciante', icon: '🏺', req: 5 },
-      { id: 'expert', name: 'Historiador Expert', icon: '📜', req: 20 },
-      { id: 'perfect', name: 'Perfeccionista', icon: '🎯', req: '100%' },
-      { id: 'streak', name: 'Em Chamas', icon: '🔥', req: 'streak_5' },
-    ];
-
-    // --- DATA ---
+    // DADOS COMPLETOS DAS PERGUNTAS RESTAURADOS
     const questionsData = [
       // ========== COMUNIDADES RECOLETORAS ==========
       {
-        id: 1,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 1, topic: 'Comunidades Recoletoras', type: 'dropdown', points: 10,
         prompt: "Define recoleção:",
         options: [
           { id: "b", text: "Modo de vida do ser humano que não tem local fixo de habitação", isCorrect: false },
@@ -135,10 +97,7 @@
         hintLevel2: "Não envolve plantar nem criar animais, apenas apanhar o que já existe."
       },
       {
-        id: 2,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 2, topic: 'Comunidades Recoletoras', type: 'dropdown', points: 10,
         prompt: "Define nomadismo:",
         options: [
           { id: "a", text: "Atividade que consiste em recolher da Natureza", isCorrect: false },
@@ -150,10 +109,7 @@
         hintLevel2: "Eles mudavam-se quando os alimentos de uma zona acabavam."
       },
       {
-        id: 3,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 3, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "Os primeiros grupos humanos eram:",
         options: [
           { id: "b", text: "Apenas recoletores", isCorrect: false },
@@ -166,10 +122,7 @@
         hintLevel2: "Não podiam ficar parados porque a comida acabava."
       },
       {
-        id: 4,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 4, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "Quais eram os materiais utilizados pelas primeiras comunidades para o fabrico de instrumentos?",
         options: [
           { id: "a", text: "Pedra, madeira e osso", isCorrect: true },
@@ -182,10 +135,7 @@
         hintLevel2: "Metais como o ferro exigem fornos quentes que eles ainda não tinham."
       },
       {
-        id: 5,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 5, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "Que nome se dá às gravuras e pinturas desenvolvidas em pedras ao ar livre pelos grupos recoletores?",
         options: [
           { id: "b", text: "Arte parietal", isCorrect: false },
@@ -198,10 +148,7 @@
         hintLevel2: "A arte ao ar livre está exposta nas rochas."
       },
       {
-        id: 6,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 15,
+        id: 6, topic: 'Comunidades Recoletoras', type: 'multiple_select', points: 15,
         prompt: "Identifica as principais atividades das comunidades recoletoras:",
         options: [
           { id: "a", text: "Caça", isCorrect: true },
@@ -218,10 +165,7 @@
         hintLevel2: "Também precisavam de fazer as suas próprias ferramentas e roupas."
       },
       {
-        id: 7,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 10,
+        id: 7, topic: 'Comunidades Recoletoras', type: 'multiple_select', points: 10,
         prompt: "Onde se abrigavam as comunidades recoletoras?",
         options: [
           { id: "a", text: "Tendas construídas com paus e cobertas com peles de animais", isCorrect: true },
@@ -233,10 +177,7 @@
         hintLevel2: "Aproveitavam o que a natureza oferecia ou faziam abrigos fáceis de desmontar."
       },
       {
-        id: 8,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 8, topic: 'Comunidades Recoletoras', type: 'dropdown', points: 10,
         prompt: "Quando os alimentos faltavam, o Homem tinha de partir para outros lugares. Era, por isso...",
         options: [
           { id: "b", text: "Recoletor", isCorrect: false },
@@ -248,10 +189,7 @@
         hintLevel2: "Nómada = sempre em movimento."
       },
       {
-        id: 9,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 9, topic: 'Comunidades Recoletoras', type: 'dropdown', points: 10,
         prompt: "O Homem alimentava-se de frutos, sementes ou raízes que apanhava da Natureza, também praticava a pesca e a caça. Era, por isso...",
         options: [
           { id: "a", text: "Recoletor", isCorrect: true },
@@ -263,10 +201,7 @@
         hintLevel2: "RE-colher = apanhar da natureza."
       },
       {
-        id: 10,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 15,
+        id: 10, topic: 'Comunidades Recoletoras', type: 'multiple_select', points: 15,
         prompt: "A caça era tão importante para as comunidades recoletoras porque fornecia...",
         options: [
           { id: "b", text: "Peles para o vestuário", isCorrect: true },
@@ -281,10 +216,7 @@
         hintLevel2: "Eles não tinham animais domesticados, por isso não tinham leite nem lã."
       },
       {
-        id: 11,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 15,
+        id: 11, topic: 'Comunidades Recoletoras', type: 'multiple_select', points: 15,
         prompt: "O fogo era usado para:",
         options: [
           { id: "c", text: "Aquecer", isCorrect: true },
@@ -300,10 +232,7 @@
         hintLevel2: "O fogo não ajudou diretamente na linguagem ou agricultura."
       },
       {
-        id: 12,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MATCHING,
-        points: 18,
+        id: 12, topic: 'Comunidades Recoletoras', type: 'matching', points: 18,
         prompt: "Associa os instrumentos às suas características e funções:",
         matchingPairs: [
           { left: "Biface", rightOptions: ["Feito de osso, para coser", "Feito de pedra lascada, usado para cortar", "Pequena ponta de pedra para caçar"], correctRight: "Feito de pedra lascada, usado para cortar" },
@@ -315,10 +244,7 @@
         hintLevel2: "A seta precisa de ser afiada e leve para voar."
       },
       {
-        id: 13,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 13, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "As primeiras comunidades recoletoras eram nómadas, porque...",
         options: [
           { id: "a", text: "Sempre que os alimentos faltavam, tinham que se deslocar para outras regiões à procura de comida", isCorrect: true },
@@ -330,10 +256,7 @@
         hintLevel2: "Sem agricultura, dependiam do que encontravam em cada local."
       },
       {
-        id: 14,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 14, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "Aos vestígios da presença das primeiras comunidades humanas encontrados nas paredes e tetos das grutas, dá-se o nome de arte...",
         options: [
           { id: "a", text: "Parietal", isCorrect: true },
@@ -345,10 +268,7 @@
         hintLevel2: "Está nas paredes interiores das grutas, não ao ar livre."
       },
       {
-        id: 15,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 15, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "As pinturas e gravuras praticadas pelas primeiras comunidades humanas eram rituais mágicos, realizados com o objetivo de...",
         options: [
           { id: "b", text: "Registar os fracassos das caçadas e identificar os animais não capturados", isCorrect: false },
@@ -362,10 +282,7 @@
 
       // ========== COMUNIDADES AGROPASTORIS ==========
       {
-        id: 16,
-        topic: Topic.AGROPASTORAL,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 16, topic: 'Comunidades Agropastoris', type: 'dropdown', points: 10,
         prompt: "Define comunidades produtoras:",
         options: [
           { id: "a", text: "Comunidades que produzem o que é essencial à sua sobrevivência e ao seu estilo de vida", isCorrect: true },
@@ -377,10 +294,7 @@
         hintLevel2: "Não dependem só do que encontram na natureza."
       },
       {
-        id: 17,
-        topic: Topic.AGROPASTORAL,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 17, topic: 'Comunidades Agropastoris', type: 'dropdown', points: 10,
         prompt: "Define sedentarismo:",
         options: [
           { id: "b", text: "Modo de vida do ser humano que não tem local fixo de habitação", isCorrect: false },
@@ -392,10 +306,7 @@
         hintLevel2: "Tinham de ficar perto das suas plantações."
       },
       {
-        id: 18,
-        topic: Topic.AGROPASTORAL,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 15,
+        id: 18, topic: 'Comunidades Agropastoris', type: 'multiple_select', points: 15,
         prompt: "Identifica as atividades desenvolvidas pelas comunidades agropastoris:",
         options: [
           { id: "a", text: "Agricultura", isCorrect: true },
@@ -411,10 +322,7 @@
         hintLevel2: "Também desenvolveram artesanato: cestos, cerâmica, tecidos."
       },
       {
-        id: 19,
-        topic: Topic.AGROPASTORAL,
-        type: QuestionType.MATCHING,
-        points: 20,
+        id: 19, topic: 'Comunidades Agropastoris', type: 'matching', points: 20,
         prompt: "Associa os instrumentos às suas funções:",
         matchingPairs: [
           { left: "Mó", rightOptions: ["Fazer tecidos", "Cortar cereais", "Fazer farinha"], correctRight: "Fazer farinha" },
@@ -428,10 +336,7 @@
         hintLevel2: "O fuso torce as fibras antes de irem para o tear."
       },
       {
-        id: 20,
-        topic: Topic.AGROPASTORAL,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 15,
+        id: 20, topic: 'Comunidades Agropastoris', type: 'multiple_select', points: 15,
         prompt: "Os vasos de barro eram utilizados para:",
         options: [
           { id: "c", text: "Transportar água", isCorrect: true },
@@ -447,10 +352,7 @@
 
       // ========== ARTE MEGALÍTICA ==========
       {
-        id: 21,
-        topic: Topic.ART_MEGALITHISM,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 21, topic: 'Arte e Megalitismo', type: 'dropdown', points: 10,
         prompt: "Define arte megalítica:",
         options: [
           { id: "a", text: "Arte das grandes pedras", isCorrect: true },
@@ -462,10 +364,7 @@
         hintLevel2: "São construções, não pinturas."
       },
       {
-        id: 22,
-        topic: Topic.ART_MEGALITHISM,
-        type: QuestionType.MATCHING,
-        points: 18,
+        id: 22, topic: 'Arte e Megalitismo', type: 'matching', points: 18,
         prompt: "Associa os monumentos megalíticos:",
         matchingPairs: [
           { left: "Menir", rightOptions: ["Monumento funerário", "Pedra isolada vertical", "Conjunto circular de pedras"], correctRight: "Pedra isolada vertical" },
@@ -477,10 +376,7 @@
         hintLevel2: "O Dólmen parece uma mesa gigante de pedra."
       },
       {
-        id: 23,
-        topic: Topic.ART_MEGALITHISM,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 23, topic: 'Arte e Megalitismo', type: 'multiple_choice', points: 10,
         prompt: "Para prestar culto aos mortos, o Homem deste período construiu...",
         options: [
           { id: "b", text: "Cromeleques", isCorrect: false },
@@ -495,10 +391,7 @@
 
       // ========== POVOS PENINSULARES ==========
       {
-        id: 24,
-        topic: Topic.IBERIAN_PEOPLES,
-        type: QuestionType.MATCHING,
-        points: 20,
+        id: 24, topic: 'Povos Peninsulares', type: 'matching', points: 20,
         prompt: "Identifica as características dos povos que chegaram à Península Ibérica:",
         matchingPairs: [
           { left: "Iberos - origem", rightOptions: ["Ásia","Norte de África", "Centro da Europa"], correctRight: "Norte de África" },
@@ -511,10 +404,7 @@
         hintLevel2: "Celtiberos resultaram da união dos dois povos."
       },
       {
-        id: 25,
-        topic: Topic.IBERIAN_PEOPLES,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 25, topic: 'Povos Peninsulares', type: 'multiple_choice', points: 10,
         prompt: "O que são castros?",
         options: [
           { id: "b", text: "Povoados com casas de planta retangulares, em torno de uma praça central", isCorrect: false },
@@ -526,10 +416,7 @@
         hintLevel2: "Tinham casas circulares e muralhas de pedra."
       },
       {
-        id: 26,
-        topic: Topic.IBERIAN_PEOPLES,
-        type: QuestionType.ORDERING,
-        points: 15,
+        id: 26, topic: 'Povos Peninsulares', type: 'ordering', points: 15,
         prompt: "Classifica por ordem de antiguidade os povos que habitaram a Península Ibérica:",
         options: [
           { id: "2", text: "Celtas", isCorrect: false },
@@ -542,10 +429,7 @@
         hintLevel2: "Celtiberos = Celtas + Iberos."
       },
       {
-        id: 27,
-        topic: Topic.IBERIAN_PEOPLES,
-        type: QuestionType.DROPDOWN,
-        points: 10,
+        id: 27, topic: 'Povos Peninsulares', type: 'dropdown', points: 10,
         prompt: "Quem possuía as armas e instrumentos agrícolas mais fortes e duradouros?",
         options: [
           { id: "b", text: "Iberos", isCorrect: false },
@@ -557,10 +441,7 @@
         hintLevel2: "O ferro é mais forte que o bronze."
       },
       {
-        id: 28,
-        topic: Topic.IBERIAN_PEOPLES,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 14,
+        id: 28, topic: 'Povos Peninsulares', type: 'multiple_select', points: 14,
         prompt: "Características físicas dos Iberos:",
         options: [
           { id: "a", text: "Morenos", isCorrect: true },
@@ -574,10 +455,7 @@
         hintLevel2: "Os Celtas é que eram louros e altos."
       },
       {
-        id: 29,
-        topic: Topic.IBERIAN_PEOPLES,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 15,
+        id: 29, topic: 'Povos Peninsulares', type: 'multiple_select', points: 15,
         prompt: "Características físicas dos Celtas:",
         options: [
           { id: "a", text: "Altos", isCorrect: true },
@@ -593,10 +471,7 @@
 
       // ========== POVOS MEDITERRÂNEOS ==========
       {
-        id: 30,
-        topic: Topic.MEDITERRANEAN_PEOPLES,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 16,
+        id: 30, topic: 'Povos Mediterrâneos', type: 'multiple_select', points: 16,
         prompt: "O que atraía os Povos do Mediterrâneo à Península Ibérica?",
         options: [
           { id: "a", text: "Ouro", isCorrect: true },
@@ -610,10 +485,7 @@
         hintLevel2: "Eles eram comerciantes em busca de metais valiosos."
       },
       {
-        id: 31,
-        topic: Topic.MEDITERRANEAN_PEOPLES,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 31, topic: 'Povos Mediterrâneos', type: 'multiple_choice', points: 10,
         prompt: "Para facilitar as trocas comerciais, os povos do Mediterrâneo estabeleceram:",
         options: [
           { id: "b", text: "Apenas feitorias", isCorrect: false },
@@ -626,10 +498,7 @@
         hintLevel2: "Alguns ficavam temporariamente, outros permanentemente."
       },
       {
-        id: 32,
-        topic: Topic.MEDITERRANEAN_PEOPLES,
-        type: QuestionType.MATCHING,
-        points: 21,
+        id: 32, topic: 'Povos Mediterrâneos', type: 'matching', points: 21,
         prompt: "Associa os povos mediterrâneos aos seus contributos culturais:",
         matchingPairs: [
           { left: "Fenícios - Alfabeto", rightOptions: ["Sim", "Não"], correctRight: "Sim" },
@@ -645,10 +514,7 @@
         hintLevel2: "Cartagineses conservavam peixe com sal."
       },
       {
-        id: 33,
-        topic: Topic.MEDITERRANEAN_PEOPLES,
-        type: QuestionType.MATCHING,
-        points: 15,
+        id: 33, topic: 'Povos Mediterrâneos', type: 'matching', points: 15,
         prompt: "Associa os povos mediterrâneos às suas origens:",
         matchingPairs: [
           { left: "Fenícios", rightOptions: ["Europa", "Ásia","Norte de África"], correctRight: "Ásia" },
@@ -660,10 +526,7 @@
         hintLevel2: "Cartago ficava no Norte de África (atual Tunísia)."
       },
       {
-        id: 34,
-        topic: Topic.MEDITERRANEAN_PEOPLES,
-        type: QuestionType.ORDERING,
-        points: 20,
+        id: 34, topic: 'Povos Mediterrâneos', type: 'ordering', points: 20,
         prompt: "Ordena cronologicamente os acontecimentos (do mais antigo para o mais recente):",
         options: [
           { id: "4", text: "Chegada à Península Ibérica dos Celtas", isCorrect: false },
@@ -681,10 +544,7 @@
 
       // ========== QUESTÕES ADICIONAIS DE CONSOLIDAÇÃO ==========
       {
-        id: 35,
-        topic: Topic.HUNTER_GATHERERS,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 35, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "Qual a principal diferença entre comunidades recoletoras e produtoras?",
         options: [
           { id: "a", text: "Recoletoras obtêm alimentos da natureza; produtoras cultivam e criam animais", isCorrect: true },
@@ -696,10 +556,7 @@
         hintLevel2: "Agricultura e pastorícia são formas de produção."
       },
       {
-        id: 36,
-        topic: Topic.AGROPASTORAL,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 36, topic: 'Comunidades Agropastoris', type: 'multiple_choice', points: 10,
         prompt: "O que permitiu às comunidades tornarem-se sedentárias?",
         options: [
           { id: "b", text: "A descoberta do fogo", isCorrect: false },
@@ -712,10 +569,7 @@
         hintLevel2: "Precisavam de cuidar das culturas e animais."
       },
       {
-        id: 37,
-        topic: Topic.IBERIAN_PEOPLES,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 37, topic: 'Povos Peninsulares', type: 'multiple_choice', points: 10,
         prompt: "Os Celtiberos resultaram de:",
         options: [
           { id: "a", text: "União entre Iberos e Celtas", isCorrect: true },
@@ -728,10 +582,7 @@
         hintLevel2: "Aconteceu nas zonas de contacto entre os dois povos."
       },
       {
-        id: 38,
-        topic: Topic.ART_MEGALITHISM,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 38, topic: 'Arte e Megalitismo', type: 'multiple_choice', points: 10,
         prompt: "Qual o significado de 'megalítico'?",
         options: [
           { id: "a", text: "Grandes pedras", isCorrect: true },
@@ -744,10 +595,7 @@
         hintLevel2: "Lítico = pedra (como em Paleolítico)."
       },
       {
-        id: 39,
-        topic: Topic.MEDITERRANEAN_PEOPLES,
-        type: QuestionType.MULTIPLE_SELECT,
-        points: 15,
+        id: 39, topic: 'Povos Mediterrâneos', type: 'multiple_select', points: 15,
         prompt: "Quais foram os povos mediterrâneos que contactaram com a Península Ibérica?",
         options: [
           { id: "a", text: "Fenícios", isCorrect: true },
@@ -761,10 +609,7 @@
         hintLevel2: "Romanos vieram mais tarde e conquistaram, não apenas comerciaram."
       },
       {
-        id: 40,
-        topic: Topic.AGROPASTORAL,
-        type: QuestionType.MULTIPLE_CHOICE,
-        points: 10,
+        id: 40, topic: 'Comunidades Agropastoris', type: 'multiple_choice', points: 10,
         prompt: "Qual a importância da roda para as comunidades agropastoris?",
         options: [
           { id: "c", text: "Ajudou na caça", isCorrect: false },
@@ -776,784 +621,727 @@
         hintLevel1: "Pensa em carroças e carros.",
         hintLevel2: "Também usavam na olaria (roda de oleiro), mas o transporte foi o principal impacto."
       },
-
-  // ========== QUESTÕES COM IMAGENS ==========
       {
-          id: 41,
-          topic: Topic.ART_MEGALITHISM,
-          type: QuestionType.MATCHING,
-          points: 18,
-          prompt: "Associa os monumentos megalíticos às figuras:",
-          image: "./image4.jpg",
-          matchingPairs: [
-            { left: "Menir", rightOptions: ["1", "2", "3"], correctRight: "1" },
-            { left: "Dólmen/Anta", rightOptions: ["1", "2", "3"], correctRight: "3" },
-            { left: "Cromeleque", rightOptions: ["1", "2", "3"], correctRight: "2" }
-          ],
-          explanation: "Menir = 1 pedra. Dólmen = 'Mesa' (túmulo). Cromeleque = Círculo (santuário).",
-          hintLevel1: "Cromeleque começa com C de Círculo.",
-          hintLevel2: "O Dólmen parece uma casinha ou mesa de pedra."
-        },
-        {
-          id: 42,
-          topic: Topic.MEDITERRANEAN_PEOPLES,
-          type: QuestionType.MATCHING,
-          points: 20,
-          prompt: "Faz a legenda da imagem:",
-          image: "./image5.jpg",
-          matchingPairs: [
-            { left: "Celtiberos", rightOptions: ["1", "2", "4"], correctRight: "2" },
-            { left: "Celtas", rightOptions: ["1", "2", "3"], correctRight: "3" },
-            { left: "Iberos", rightOptions: ["1", "2", "4"], correctRight: "1" },
-            { left: "Lusitanos", rightOptions: ["1", "3", "4"], correctRight: "4" }
-          ],
-          explanation: "Iberos=vieram do Norte de África. Celtas=Povo do Centro da Europa. Lusitanos=situados entre o Tejo e o Mondego.",
-          hintLevel1: "Celtiberos=união dos Celtas e dos Iberos.",
-          hintLevel2: "Iberos=ocuparam as zonas próximas do Mediterrâneo."
-        },
-        {
-          id: 43,
-          topic: Topic.MEDITERRANEAN_PEOPLES,
-          type: QuestionType.MATCHING,
-          points: 18,
-          prompt: "Faz a legenda da imagem:",
-          image: "./image6.jpg",
-          matchingPairs: [
-            { left: "Gregos", rightOptions: ["A", "B", "C"], correctRight: "B" },
-            { left: "Fenícios", rightOptions: ["A", "B", "C"], correctRight: "A" },
-            { left: "Cartagineses", rightOptions: ["A", "B", "C"], correctRight: "C" }
-          ],
-          explanation: "Gregos vieram da Europa. Fenícios vieram da Ásia. Cartagineses vieram do Norte de África.",
-          hintLevel1: "Cartagineses trouxeram conservação dos alimentos pelo sal.",
-          hintLevel2: "Gregos trouxeram a moeda."
-        },
-        {
-          id: 44,
-          topic: Topic.AGROPASTORAL,
-          type: QuestionType.MATCHING,
-          points: 18,
-          prompt: "Associa corretamente os elementos da imagem:",
-          image: "./image1.jpg",
-          matchingPairs: [
-            { left: "Biface", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 1" },
-            { left: "feito de osso", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 3" },
-            { left: "feito de pedra lascada", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 1" },
-            { left: "feito de madeira", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 2" },
-            { left: "Agulha", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 3" },
-            { left: "Ponta de seta", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 2" }
-          ],
-          explanation: "Feito de pedra lascada = Biface.",
-          hintLevel1: "Feito de madeira = Ponta de seta.",
-          hintLevel2: "Feito de osso = Agulha."
-        },
-        {
-          id: 45,
-          topic: Topic.AGROPASTORAL,
-          type: QuestionType.MATCHING,
-          points: 18,
-          prompt: "Faz a legenda da imagem:",
-          image: "./image2.jpg",
-          matchingPairs: [
-            { left: "Agricultura", rightOptions: ["A", "B", "C"], correctRight: "A" },
-            { left: "Construção de casas", rightOptions: ["D", "E", "F"], correctRight: "F" },
-            { left: "Olaria", rightOptions: ["B", "C", "D"], correctRight: "D" },
-            { left: "Pastorícia", rightOptions: ["B", "C", "D"], correctRight: "B" },
-            { left: "Cestaria", rightOptions: ["B", "C", "D"], correctRight: "C" },
-            { left: "Tecelagem", rightOptions: ["D", "E", "F"], correctRight: "E" }
-          ],
-          explanation: "Agricultura=plantação de cereais. Pastorícia=criação de animais. Construção de casas=habitações permanentes.",
-          hintLevel1: "Agricultura = plantações; Pastorícia = criação de animais.",
-          hintLevel2: "A olaria é a cerâmica; Cestaria = cestos; Tecelagem = tecidos."
-        }
+        id: 41, topic: 'Arte e Megalitismo', type: 'matching', points: 18,
+        prompt: "Associa os monumentos megalíticos às figuras:",
+        image: "./image4.jpg",
+        matchingPairs: [
+          { left: "Menir", rightOptions: ["1", "2", "3"], correctRight: "1" },
+          { left: "Dólmen/Anta", rightOptions: ["1", "2", "3"], correctRight: "3" },
+          { left: "Cromeleque", rightOptions: ["1", "2", "3"], correctRight: "2" }
+        ],
+        explanation: "Menir = 1 pedra. Dólmen = 'Mesa' (túmulo). Cromeleque = Círculo (santuário).",
+        hintLevel1: "Cromeleque começa com C de Círculo.",
+        hintLevel2: "O Dólmen parece uma casinha ou mesa de pedra."
+      },
+      {
+        id: 42, topic: 'Povos Mediterrâneos', type: 'matching', points: 20,
+        prompt: "Faz a legenda da imagem:",
+        image: "./image5.jpg",
+        matchingPairs: [
+          { left: "Celtiberos", rightOptions: ["1", "2", "4"], correctRight: "2" },
+          { left: "Celtas", rightOptions: ["1", "2", "3"], correctRight: "3" },
+          { left: "Iberos", rightOptions: ["1", "2", "4"], correctRight: "1" },
+          { left: "Lusitanos", rightOptions: ["1", "3", "4"], correctRight: "4" }
+        ],
+        explanation: "Iberos=vieram do Norte de África. Celtas=Povo do Centro da Europa. Lusitanos=situados entre o Tejo e o Mondego.",
+        hintLevel1: "Celtiberos=união dos Celtas e dos Iberos.",
+        hintLevel2: "Iberos=ocuparam as zonas próximas do Mediterrâneo."
+      },
+      {
+        id: 43, topic: 'Povos Mediterrâneos', type: 'matching', points: 18,
+        prompt: "Faz a legenda da imagem:",
+        image: "./image6.jpg",
+        matchingPairs: [
+          { left: "Gregos", rightOptions: ["A", "B", "C"], correctRight: "B" },
+          { left: "Fenícios", rightOptions: ["A", "B", "C"], correctRight: "A" },
+          { left: "Cartagineses", rightOptions: ["A", "B", "C"], correctRight: "C" }
+        ],
+        explanation: "Gregos vieram da Europa. Fenícios vieram da Ásia. Cartagineses vieram do Norte de África.",
+        hintLevel1: "Cartagineses trouxeram conservação dos alimentos pelo sal.",
+        hintLevel2: "Gregos trouxeram a moeda."
+      },
+      {
+        id: 44, topic: 'Comunidades Agropastoris', type: 'matching', points: 18,
+        prompt: "Associa corretamente os elementos da imagem:",
+        image: "./image1.jpg",
+        matchingPairs: [
+          { left: "Biface", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 1" },
+          { left: "feito de osso", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 3" },
+          { left: "feito de pedra lascada", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 1" },
+          { left: "feito de madeira", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 2" },
+          { left: "Agulha", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 3" },
+          { left: "Ponta de seta", rightOptions: ["Fig. 1", "Fig. 2", "Fig. 3"], correctRight: "Fig. 2" }
+        ],
+        explanation: "Feito de pedra lascada = Biface.",
+        hintLevel1: "Feito de madeira = Ponta de seta.",
+        hintLevel2: "Feito de osso = Agulha."
+      },
+      {
+        id: 45, topic: 'Comunidades Agropastoris', type: 'matching', points: 18,
+        prompt: "Faz a legenda da imagem:",
+        image: "./image2.jpg",
+        matchingPairs: [
+          { left: "Agricultura", rightOptions: ["A", "B", "C"], correctRight: "A" },
+          { left: "Construção de casas", rightOptions: ["D", "E", "F"], correctRight: "F" },
+          { left: "Olaria", rightOptions: ["B", "C", "D"], correctRight: "D" },
+          { left: "Pastorícia", rightOptions: ["B", "C", "D"], correctRight: "B" },
+          { left: "Cestaria", rightOptions: ["B", "C", "D"], correctRight: "C" },
+          { left: "Tecelagem", rightOptions: ["D", "E", "F"], correctRight: "E" }
+        ],
+        explanation: "Agricultura=plantação de cereais. Pastorícia=criação de animais. Construção de casas=habitações permanentes.",
+        hintLevel1: "Agricultura = plantações; Pastorícia = criação de animais.",
+        hintLevel2: "A olaria é a cerâmica; Cestaria = cestos; Tecelagem = tecidos."
+      }
     ];
 
-    // --- COMPONENTS ---
-
-    const Button = ({ children, variant = 'primary', fullWidth = false, className = '', ...props }) => {
-      const baseStyles = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
-
-      const variants = {
-        primary: "bg-bronze-500 hover:bg-bronze-600 text-white shadow-md shadow-bronze-500/20 focus:ring-bronze-500",
-        secondary: "bg-stone-200 hover:bg-stone-300 text-stone-800 focus:ring-stone-400",
-        outline: "border-2 border-bronze-500 text-bronze-600 hover:bg-bronze-50 focus:ring-bronze-500",
-        ghost: "bg-transparent hover:bg-stone-100 text-stone-600 focus:ring-stone-300"
-      };
-
-      return (
-        <button
-          className={`${baseStyles} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
-          {...props}
-        >
-          {children}
-        </button>
-      );
+    // ==========================================
+    // 2. ESTADO DA APLICAÇÃO (STATE MANAGEMENT)
+    // ==========================================
+    
+    const state = {
+      view: 'home', // 'home', 'quiz', 'dashboard'
+      mode: 'study', // 'study', 'test'
+      activeQuestions: [],
+      currentQuestionIndex: 0,
+      userAnswers: {}, // { questionId: answer }
+      showFeedback: false,
+      feedbackCorrect: false,
+      hintLevel: 0,
+      hintTimer: 0,
+      timeLeft: null,
+      timerInterval: null,
+      hintInterval: null,
+      lastWrongIds: [],
+      isGuideOpen: false,
+      
+      // Persistent Stats
+      stats: JSON.parse(localStorage.getItem('cronos_stats')) || {
+        totalScore: 0,
+        gamesPlayed: 0,
+        badges: [],
+        history: [],
+        topicPerformance: {}
+      }
     };
 
-    const FeedbackCard = ({ isCorrect, explanation, onNext, isLastQuestion }) => {
-      return (
-        <div className={`mt-6 p-6 rounded-xl border-l-4 shadow-lg animate-fade-in ${isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'
-          }`}>
-          <div className="flex items-start gap-4">
-            <div className="mt-1">
-              {isCorrect ? <CheckCircle className="w-8 h-8 text-green-600" /> : <XCircle className="w-8 h-8 text-red-600" />}
-            </div>
-            <div className="flex-1">
-              <h3 className={`text-lg font-bold mb-2 ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-                {isCorrect ? 'Correto! Muito bem!' : 'Incorreto.'}
-              </h3>
+    // ==========================================
+    // 3. FUNÇÕES UTILITÁRIAS
+    // ==========================================
+    
+    function saveStats() {
+      localStorage.setItem('cronos_stats', JSON.stringify(state.stats));
+    }
 
-              <div className="bg-white/60 p-4 rounded-lg mt-2">
-                <div className="flex items-center gap-2 mb-2 text-stone-700 font-semibold">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
-                  <span>Explicação:</span>
-                </div>
-                <p className="text-stone-700 leading-relaxed">{explanation}</p>
-              </div>
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
 
-              <button
-                onClick={onNext}
-                className={`mt-4 px-6 py-2 rounded-lg font-bold text-white shadow-md transition-transform active:scale-95 ${isCorrect ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
-                  }`}
-              >
-                {isLastQuestion ? 'Ver Resultados' : 'Próxima Questão →'}
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    };
+    function lucideInit() {
+      if (window.lucide) window.lucide.createIcons();
+    }
+    
+    function goHome() {
+      clearInterval(state.timerInterval);
+      clearInterval(state.hintInterval);
+      state.view = 'home';
+      renderApp();
+    }
 
-    const ProgressBar = ({ current, total }) => {
-      const progress = Math.min(100, (current / total) * 100);
-      return (
-        <div className="w-full h-3 bg-stone-200 rounded-full overflow-hidden mb-6">
-          <div
-            className="h-full bg-bronze-500 transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      );
-    };
+    // ==========================================
+    // 4. LÓGICA DO QUIZ
+    // ==========================================
 
-    const Header = ({ mode, onExit, timeLeft }) => {
-      const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      };
+    function startQuiz(mode, isReview = false) {
+      state.mode = mode;
+      state.view = 'quiz';
+      state.currentQuestionIndex = 0;
+      state.userAnswers = {};
+      state.showFeedback = false;
+      state.hintLevel = 0;
+      state.hintTimer = 0;
+      
+      // Configurar perguntas
+      if (isReview) {
+        state.activeQuestions = questionsData.filter(q => state.lastWrongIds.includes(q.id));
+      } else {
+        // Reset perguntas (aqui poderia ter shuffle)
+        state.activeQuestions = [...questionsData];
+      }
 
-      return (
-        <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-stone-200 shadow-sm">
-          <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <div className="bg-bronze-500 p-1.5 rounded-lg">
-                <span className="text-white text-xl">🏺</span>
-              </div>
+      // Configurar Timer
+      clearInterval(state.timerInterval);
+      if (mode === 'test') {
+        state.timeLeft = 600; // 10 mins
+        state.timerInterval = setInterval(() => {
+          if (state.timeLeft > 0) {
+            state.timeLeft--;
+            const timerDisplay = document.getElementById('timer-display');
+            if (timerDisplay) timerDisplay.innerText = formatTime(state.timeLeft);
+            
+            const timerContainer = document.getElementById('timer-container');
+            if(timerContainer && state.timeLeft < 60) timerContainer.classList.add('text-red-600', 'bg-red-50', 'animate-pulse');
+          } else {
+            finishQuiz();
+          }
+        }, 1000);
+      } else {
+        state.timeLeft = null;
+        startHintTimer();
+      }
+      
+      renderApp();
+    }
+
+    function startHintTimer() {
+      clearInterval(state.hintInterval);
+      if (state.mode === 'study' && !state.showFeedback) {
+        state.hintInterval = setInterval(() => {
+          state.hintTimer++;
+          if (state.hintTimer === 30) { state.hintLevel = 1; renderQuiz(); }
+          if (state.hintTimer === 60) { state.hintLevel = 2; renderQuiz(); }
+          // Atualiza contadores na UI se existirem
+          const hintCounters = document.querySelectorAll('.hint-counter');
+          hintCounters.forEach(el => {
+             const limit = parseInt(el.dataset.limit);
+             if(limit > state.hintTimer) el.innerText = `(${limit - state.hintTimer}s)`;
+             else el.innerText = '';
+          });
+        }, 1000);
+      }
+    }
+
+    function checkAnswer(question, answer) {
+      if (!answer) return false;
+      if (question.type === 'multiple_choice' || question.type === 'dropdown') {
+        const opt = question.options.find(o => o.id === answer);
+        return opt ? opt.isCorrect : false;
+      }
+      if (question.type === 'multiple_select') {
+        const correctIds = question.options.filter(o => o.isCorrect).map(o => o.id);
+        if (answer.length !== correctIds.length) return false;
+        return correctIds.every(id => answer.includes(id));
+      }
+      if (question.type === 'matching') {
+        return question.matchingPairs.every(pair => answer[pair.left] === pair.correctRight);
+      }
+      if (question.type === 'ordering') {
+        return JSON.stringify(answer) === JSON.stringify(question.correctOrder);
+      }
+      return false;
+    }
+
+    function submitAnswer() {
+      const q = state.activeQuestions[state.currentQuestionIndex];
+      const ans = state.userAnswers[q.id];
+      
+      if (state.mode === 'study') {
+        const isCorrect = checkAnswer(q, ans);
+        state.feedbackCorrect = isCorrect;
+        state.showFeedback = true;
+        clearInterval(state.hintInterval);
+        renderQuiz();
+      } else {
+        nextQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (state.currentQuestionIndex < state.activeQuestions.length - 1) {
+        state.currentQuestionIndex++;
+        state.showFeedback = false;
+        state.hintLevel = 0;
+        state.hintTimer = 0;
+        if(state.mode === 'study') startHintTimer();
+        renderQuiz();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      clearInterval(state.timerInterval);
+      clearInterval(state.hintInterval);
+
+      let correctCount = 0;
+      let sessionScore = 0;
+      let wrongIds = [];
+      let currentStreak = 0;
+      let maxStreak = 0;
+
+      // Calcular Stats
+      state.activeQuestions.forEach(q => {
+        const ans = state.userAnswers[q.id];
+        const isCorrect = checkAnswer(q, ans);
+        
+        // Topic Stats
+        if (!state.stats.topicPerformance[q.topic]) {
+          state.stats.topicPerformance[q.topic] = { correct: 0, total: 0 };
+        }
+        state.stats.topicPerformance[q.topic].total++;
+
+        if (isCorrect) {
+          correctCount++;
+          sessionScore += q.points;
+          state.stats.topicPerformance[q.topic].correct++;
+          currentStreak++;
+          if (currentStreak > maxStreak) maxStreak = currentStreak;
+        } else {
+          wrongIds.push(q.id);
+          currentStreak = 0;
+        }
+      });
+
+      state.lastWrongIds = wrongIds;
+      state.stats.totalScore += sessionScore;
+      state.stats.gamesPlayed++;
+      state.stats.history.push({ date: new Date().toLocaleDateString(), score: sessionScore, total: state.activeQuestions.length * 10 });
+
+      // Badges Logic
+      const badges = state.stats.badges;
+      if (state.activeQuestions.length >= 5 && correctCount >= 5 && !badges.includes('novice')) badges.push('novice');
+      if (state.stats.totalScore >= 500 && !badges.includes('expert')) badges.push('expert');
+      if (maxStreak >= 5 && !badges.includes('streak')) badges.push('streak');
+      if (state.mode === 'test' && wrongIds.length === 0 && state.activeQuestions.length >= 5 && !badges.includes('perfect')) badges.push('perfect');
+
+      saveStats();
+      state.view = 'dashboard';
+      renderApp();
+    }
+
+    // ==========================================
+    // 5. RENDERIZAÇÃO (DOM MANIPULATION)
+    // ==========================================
+
+    function renderHeader() {
+      return `
+        <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-stone-200 shadow-sm">
+          <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
+              <div class="bg-bronze-500 p-1.5 rounded-lg text-white">🏺</div>
               <div>
-                <h1 className="font-serif font-bold text-stone-800 leading-tight hidden sm:block">Cronos</h1>
-                <p className="text-xs text-stone-500 uppercase tracking-wider font-semibold">História Ibérica</p>
+                <h1 class="font-serif font-bold text-stone-800 leading-tight hidden sm:block">Cronos</h1>
+                <p class="text-xs text-stone-500 uppercase tracking-wider font-semibold">História Ibérica</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              {mode === 'test' && timeLeft !== null && (
-                <div className={`flex items-center gap-2 font-mono font-bold text-lg px-3 py-1 rounded-lg ${timeLeft < 60 ? 'text-red-600 bg-red-50 animate-pulse' : 'text-stone-700 bg-stone-100'}`}>
-                  <Clock className="w-5 h-5" />
-                  {formatTime(timeLeft)}
+            <div class="flex items-center gap-3">
+              ${state.mode === 'test' && state.view === 'quiz' ? `
+                <div id="timer-container" class="flex items-center gap-2 font-mono font-bold text-lg px-3 py-1 rounded-lg text-stone-700 bg-stone-100 transition-colors">
+                  <i data-lucide="clock" class="w-5 h-5"></i>
+                  <span id="timer-display">${formatTime(state.timeLeft)}</span>
                 </div>
-              )}
-              {mode !== 'home' && (
-                <Button variant="ghost" onClick={onExit} className="text-sm">
-                  Sair
-                </Button>
-              )}
+              ` : ''}
+              <button onclick="toggleGuide(true)" class="p-2 text-stone-500 hover:bg-stone-100 rounded-full transition-colors" title="Ajuda">
+                <i data-lucide="help-circle" class="w-6 h-6"></i>
+              </button>
+              ${state.view !== 'home' ? `
+                <button onclick="goHome()" class="px-3 py-1 text-sm font-medium text-stone-600 hover:bg-stone-100 rounded-lg">Sair</button>
+              ` : ''}
             </div>
           </div>
         </header>
-      );
-    };
+      `;
+    }
 
-    const BadgeCard = ({ badge, earned }) => (
-      <div className={`flex flex-col items-center p-4 rounded-xl border-2 transition-all ${earned
-          ? 'bg-amber-50 border-amber-400 shadow-md scale-100 opacity-100'
-          : 'bg-stone-50 border-stone-200 grayscale opacity-60'
-        }`}>
-        <div className="text-4xl mb-2">{badge.icon}</div>
-        <span className="font-bold text-center text-sm text-stone-800">{badge.name}</span>
-        {earned && <span className="text-xs text-amber-600 font-bold mt-1">Conquistado!</span>}
-      </div>
-    );
-
-    // --- MAIN APP ---
-    const App = () => {
-      // Navigation State
-      const [view, setView] = useState('home');
-      const [mode, setMode] = useState('study');
-
-      // Quiz State
-      const [activeQuestions, setActiveQuestions] = useState(questionsData);
-      const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-      const [userAnswers, setUserAnswers] = useState({});
-      const [score, setScore] = useState(0);
-      const [streak, setStreak] = useState(0);
-      const [showFeedback, setShowFeedback] = useState(false);
-      const [feedbackCorrect, setFeedbackCorrect] = useState(false);
-      const [quizComplete, setQuizComplete] = useState(false);
-
-      // Hint State
-      const [hintLevel, setHintLevel] = useState(0);
-      const [hintTimer, setHintTimer] = useState(0);
-
-      // Timer State (Test Mode)
-      const [quizStartTime, setQuizStartTime] = useState(0);
-      const [timeLeft, setTimeLeft] = useState(null);
-
-      // Review State
-      const [lastWrongIds, setLastWrongIds] = useState([]);
-
-      // Persistent State (Simulated)
-      const [userStats, setUserStats] = useState({
-        completedQuestions: [],
-        score: 0,
-        streak: 0,
-        badges: [],
-        history: []
-      });
-
-      // Derived Values
-      const currentQuestion = activeQuestions[currentQuestionIndex];
-      const totalQuestions = activeQuestions.length;
-      const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
-
-      // Effects
-      useEffect(() => {
-        // Hint Timer Logic
-        if (view === 'quiz' && mode === 'study' && !showFeedback && !quizComplete) {
-          const timer = setInterval(() => {
-            setHintTimer(prev => {
-              if (prev === 29) setHintLevel(1);
-              if (prev === 59) setHintLevel(2);
-              return prev + 1;
-            });
-          }, 1000);
-          return () => clearInterval(timer);
-        }
-      }, [view, mode, showFeedback, quizComplete]);
-
-      // Test Timer Logic
-      useEffect(() => {
-        if (view === 'quiz' && mode === 'test' && !quizComplete) {
-          if (timeLeft === 0) {
-            finishQuiz();
-            return;
-          }
-          if (timeLeft === null) return;
-
-          const timer = setInterval(() => {
-            setTimeLeft(prev => prev > 0 ? prev - 1 : 0);
-          }, 1000);
-          return () => clearInterval(timer);
-        }
-      }, [view, mode, timeLeft, quizComplete]);
-
-
-      // Methods
-      const startQuiz = (selectedMode) => {
-        setMode(selectedMode);
-        setActiveQuestions(questionsData); // Reset to all questions
-        setView('quiz');
-        setCurrentQuestionIndex(0);
-        setUserAnswers({});
-        setScore(0);
-        setStreak(0);
-        setQuizComplete(false);
-        setShowFeedback(false);
-        setHintLevel(0);
-        setHintTimer(0);
-        setQuizStartTime(Date.now());
-
-        if (selectedMode === 'test') {
-          setTimeLeft(600); // 10 minutes in seconds
-        } else {
-          setTimeLeft(null);
-        }
-      };
-
-      const startReview = () => {
-        const reviewQuestions = questionsData.filter(q => lastWrongIds.includes(q.id));
-        setActiveQuestions(reviewQuestions);
-        setMode('study'); // Review is always in study mode (feedback enabled)
-        setView('quiz');
-        setCurrentQuestionIndex(0);
-        setUserAnswers({});
-        setScore(0);
-        setStreak(0);
-        setQuizComplete(false);
-        setShowFeedback(false);
-        setHintLevel(0);
-        setHintTimer(0);
-        setQuizStartTime(Date.now());
-        setTimeLeft(null);
-      };
-
-      const handleOptionSelect = (value) => {
-        if (showFeedback) return;
-
-        setUserAnswers(prev => {
-          if (currentQuestion.type === QuestionType.MULTIPLE_SELECT) {
-            const currentSelected = prev[currentQuestion.id] || [];
-            if (currentSelected.includes(value)) {
-              return { ...prev, [currentQuestion.id]: currentSelected.filter(item => item !== value) };
-            } else {
-              return { ...prev, [currentQuestion.id]: [...currentSelected, value] };
-            }
-          }
-          else if (currentQuestion.type === QuestionType.MATCHING) {
-            const currentMatch = prev[currentQuestion.id] || {};
-            return { ...prev, [currentQuestion.id]: { ...currentMatch, [value.left]: value.right } };
-          }
-          else if (currentQuestion.type === QuestionType.ORDERING) {
-            return { ...prev, [currentQuestion.id]: value };
-          }
-
-          return { ...prev, [currentQuestion.id]: value };
-        });
-      };
-
-      const checkAnswerLogic = (question, answer) => {
-        if (!answer) return false;
-
-        switch (question.type) {
-          case QuestionType.MULTIPLE_CHOICE:
-          case QuestionType.DROPDOWN:
-            return question.options?.find(opt => opt.id === answer)?.isCorrect || false;
-          case QuestionType.MULTIPLE_SELECT:
-            const correctIds = question.options?.filter(o => o.isCorrect).map(o => o.id) || [];
-            const selectedIds = answer;
-            return correctIds.length === selectedIds.length && correctIds.every(id => selectedIds.includes(id));
-          case QuestionType.MATCHING:
-            const pairs = question.matchingPairs || [];
-            const userMap = answer;
-            return pairs.every(pair => userMap[pair.left] === pair.correctRight);
-          case QuestionType.ORDERING:
-            const userOrder = answer;
-            const correctOrder = question.correctOrder || [];
-            return JSON.stringify(userOrder) === JSON.stringify(correctOrder);
-          default:
-            return false;
-        }
-      };
-
-      const checkAnswer = () => {
-        const answer = userAnswers[currentQuestion.id];
-        const isCorrect = checkAnswerLogic(currentQuestion, answer);
-
-        if (isCorrect) {
-          setScore(s => s + currentQuestion.points + (streak >= 3 ? 5 : 0));
-          setStreak(s => s + 1);
-        } else {
-          setStreak(0);
-        }
-
-        if (mode === 'study') {
-          setFeedbackCorrect(isCorrect);
-          setShowFeedback(true);
-        } else {
-          nextQuestion();
-        }
-      };
-
-      const nextQuestion = () => {
-        if (isLastQuestion) {
-          finishQuiz();
-        } else {
-          setCurrentQuestionIndex(prev => prev + 1);
-          setShowFeedback(false);
-          setHintLevel(0);
-          setHintTimer(0);
-        }
-      };
-
-      const finishQuiz = () => {
-        setQuizComplete(true);
-        setTimeLeft(null); // Stop timer
-
-        // Calculate stats for this session
-        const wrongIds = [];
-        let sessionScore = 0;
-
-        activeQuestions.forEach(q => {
-          const ans = userAnswers[q.id];
-          const isCorrect = checkAnswerLogic(q, ans);
-          if (!isCorrect) {
-            wrongIds.push(q.id);
-          } else {
-            // Recalculate basic score if needed, but we used state tracking for study mode
-            // For test mode, the score wasn't incremented in real-time, so we do it here if needed
-            // However, to keep it simple, we used the checkAnswer function which updates 'score' state.
-            // Note: checkAnswer is only called on button click. In test mode, if timer runs out, checkAnswer might not be called for the last one.
-            // For simplicity in this MVP, we assume manual progression updates score.
-            // If timer runs out, unanswered questions are wrong.
-          }
-        });
-
-        setLastWrongIds(wrongIds);
-
-        const totalPossiblePoints = activeQuestions.reduce((acc, q) => acc + q.points, 0);
-
-        const newBadges = [...userStats.badges];
-        if (score > 50 && !newBadges.includes('novice')) newBadges.push('novice');
-        if (streak >= 5 && !newBadges.includes('streak')) newBadges.push('streak');
-
-        setUserStats(prev => ({
-          ...prev,
-          badges: newBadges,
-          history: [...prev.history, { date: new Date().toLocaleDateString(), score, total: totalPossiblePoints }]
-        }));
-
-        setView('dashboard');
-      };
-
-      const renderQuestionInput = () => {
-        const q = currentQuestion;
-        const ans = userAnswers[q.id];
-
-        switch (q.type) {
-          case QuestionType.MULTIPLE_CHOICE:
-            return (
-              <div className="space-y-3">
-                {q.options?.map(opt => (
-                  <button
-                    key={opt.id}
-                    onClick={() => handleOptionSelect(opt.id)}
-                    disabled={showFeedback}
-                    className={`w-full p-4 text-left rounded-lg border-2 transition-all flex items-center gap-3 ${ans === opt.id
-                        ? 'border-bronze-500 bg-amber-50 text-stone-900 font-medium shadow-sm'
-                        : 'border-stone-200 hover:border-bronze-300 bg-white text-stone-700'
-                      }`}
-                  >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${ans === opt.id ? 'border-bronze-500' : 'border-stone-300'
-                      }`}>
-                      {ans === opt.id && <div className="w-2.5 h-2.5 rounded-full bg-bronze-500" />}
-                    </div>
-                    {opt.text}
-                  </button>
-                ))}
-              </div>
-            );
-
-          case QuestionType.MULTIPLE_SELECT:
-            return (
-              <div className="space-y-3">
-                {q.options?.map(opt => {
-                  const selected = (ans || []).includes(opt.id);
-                  return (
-                    <button
-                      key={opt.id}
-                      onClick={() => handleOptionSelect(opt.id)}
-                      disabled={showFeedback}
-                      className={`w-full p-4 text-left rounded-lg border-2 transition-all flex items-center gap-3 ${selected
-                          ? 'border-bronze-500 bg-amber-50 text-stone-900 font-medium'
-                          : 'border-stone-200 hover:border-bronze-300 bg-white text-stone-700'
-                        }`}
-                    >
-                      <div className={`w-5 h-5 rounded flex items-center justify-center border-2 ${selected ? 'bg-bronze-500 border-bronze-500 text-white' : 'border-stone-300 bg-white'
-                        }`}>
-                        {selected && <ArrowRight className="w-3 h-3" />}
-                      </div>
-                      {opt.text}
-                    </button>
-                  );
-                })}
-              </div>
-            );
-
-          case QuestionType.DROPDOWN:
-            return (
-              <div className="mt-4">
-                <select
-                  className="w-full p-3 border-2 border-stone-300 rounded-lg text-lg focus:border-bronze-500 outline-none bg-white"
-                  value={ans || ""}
-                  onChange={(e) => handleOptionSelect(e.target.value)}
-                  disabled={showFeedback}
-                >
-                  <option value="" disabled>Selecione uma opção...</option>
-                  {q.options?.map(opt => (
-                    <option key={opt.id} value={opt.id}>{opt.text}</option>
-                  ))}
-                </select>
-              </div>
-            );
-
-          case QuestionType.MATCHING:
-            const matches = ans || {};
-            return (
-              <div className="space-y-4">
-                {q.matchingPairs?.map((pair, idx) => (
-                  <div key={idx} className="bg-white p-4 rounded-lg border border-stone-200 shadow-sm flex flex-col sm:flex-row items-center gap-4 justify-between">
-                    <div className="font-semibold text-stone-800 flex-1">{pair.left}</div>
-                    <ArrowRight className="text-stone-400 hidden sm:block" />
-                    <select
-                      className="flex-1 p-2 border border-stone-300 rounded bg-stone-50"
-                      value={matches[pair.left] || ""}
-                      onChange={(e) => handleOptionSelect({ left: pair.left, right: e.target.value })}
-                      disabled={showFeedback}
-                    >
-                      <option value="" disabled>Selecionar correspondência...</option>
-                      {pair.rightOptions.map((opt, i) => (
-                        <option key={i} value={opt}>{opt}</option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-              </div>
-            );
-
-          case QuestionType.ORDERING:
-            const currentOrder = ans || [];
-            const remainingOptions = q.options?.filter(o => !currentOrder.includes(o.id)) || [];
-
-            return (
-              <div className="space-y-4">
-                <div className="bg-stone-100 p-4 rounded-lg min-h-[100px] border-2 border-dashed border-stone-300">
-                  <p className="text-xs text-stone-500 mb-2 font-bold uppercase">Sua Ordem:</p>
-                  {currentOrder.length === 0 && <p className="text-stone-400 italic text-sm">Clique nas opções abaixo para ordenar</p>}
-                  <div className="space-y-2">
-                    {currentOrder.map((id, index) => {
-                      const opt = q.options?.find(o => o.id === id);
-                      return (
-                        <div key={id} className="bg-white p-3 rounded shadow-sm border border-stone-200 flex justify-between items-center">
-                          <span className="font-bold text-bronze-600 mr-3">{index + 1}.</span>
-                          <span>{opt?.text}</span>
-                          {!showFeedback && (
-                            <button onClick={() => {
-                              const newOrder = currentOrder.filter(item => item !== id);
-                              handleOptionSelect(newOrder);
-                            }} className="text-red-500 hover:text-red-700 text-sm">Remover</button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-2">
-                  {remainingOptions.map(opt => (
-                    <button
-                      key={opt.id}
-                      onClick={() => handleOptionSelect([...currentOrder, opt.id])}
-                      className="p-3 bg-white border border-stone-200 rounded hover:bg-stone-50 text-left"
-                      disabled={showFeedback}
-                    >
-                      {opt.text}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            );
-
-          default:
-            return <div>Unsupported type</div>;
-        }
-      };
-
-      if (view === 'home') {
-        return (
-          <div className="min-h-screen bg-stone-50 font-sans text-stone-800">
-            <Header mode="home" onExit={() => { }} />
-            <main className="max-w-4xl mx-auto px-4 py-12">
-              <div className="text-center mb-16 space-y-4">
-                <h1 className="text-4xl md:text-6xl font-serif font-bold text-stone-900 mb-4">
-                  Primeiras Comunidades <br /> <span className="text-bronze-600">da Península Ibérica</span>
-                </h1>
-                <p className="text-lg text-stone-600 max-w-2xl mx-auto">
-                  Prepara-te para o teste de História. Explora a vida dos caçadores-recoletores,
-                  a arte rupestre, e a chegada dos povos mediterrâneos.
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-3 gap-6">
-                {MODES.map(m => (
-                  <div key={m.id} className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all p-8 flex flex-col items-center text-center border border-stone-100 group">
-                    <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-6 text-stone-600 group-hover:bg-bronze-100 group-hover:text-bronze-600 transition-colors">
-                      {m.icon}
-                    </div>
-                    <h3 className="text-xl font-bold mb-2">{m.name}</h3>
-                    <p className="text-stone-500 text-sm mb-6 flex-1">{m.desc}</p>
-                    <Button
-                      fullWidth
-                      onClick={() => m.id === 'dashboard' ? setView('dashboard') : startQuiz(m.id)}
-                    >
-                      Começar
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </main>
+    function renderHome() {
+      const modesHtml = MODES.map(m => `
+        <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all p-8 flex flex-col items-center text-center border border-stone-100 group">
+          <div class="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-6 text-stone-600 group-hover:bg-bronze-100 group-hover:text-bronze-600 transition-colors">
+            <i data-lucide="${m.icon}" class="w-8 h-8"></i>
           </div>
-        );
-      }
-
-      if (view === 'dashboard') {
-        const data = [
-          { name: 'Recoletores', score: 184 },
-          { name: 'Produtores', score: 116 },
-          { name: 'Arte', score: 66 },
-          { name: 'Iberos', score: 94 },
-          { name: 'Mediterrâneo', score: 135 },
-        ];
-
-        return (
-          <div className="min-h-screen bg-stone-50">
-            <Header mode="dashboard" onExit={() => setView('home')} />
-            <main className="max-w-5xl mx-auto px-4 py-8">
-              <div className="flex justify-between items-center mb-6">
-                <Button variant="ghost" onClick={() => setView('home')} className="pl-0 hover:bg-transparent hover:text-bronze-600">
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Menu
-                </Button>
-
-                {lastWrongIds.length > 0 && (
-                  <Button onClick={startReview} className="bg-red-600 hover:bg-red-700 text-white shadow-red-500/20">
-                    <RefreshCw className="w-4 h-4 mr-2" /> Rever {lastWrongIds.length} Erros
-                  </Button>
-                )}
-              </div>
-
-              {lastWrongIds.length > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
-                  <div>
-                    <h4 className="font-bold text-amber-800">Revisão Disponível</h4>
-                    <p className="text-sm text-amber-700">Tens {lastWrongIds.length} respostas incorretas do último teste que podes rever agora.</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="grid md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                  <h3 className="text-stone-500 text-sm font-bold uppercase mb-2">Total Pontos</h3>
-                  <p className="text-4xl font-serif font-bold text-bronze-600">{userStats.score}</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                  <h3 className="text-stone-500 text-sm font-bold uppercase mb-2">Testes Completos</h3>
-                  <p className="text-4xl font-serif font-bold text-stone-800">{userStats.history.length}</p>
-                </div>
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                  <h3 className="text-stone-500 text-sm font-bold uppercase mb-2">Badges</h3>
-                  <p className="text-4xl font-serif font-bold text-amber-500">{userStats.badges.length}/{BADGES.length}</p>
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                  <h3 className="font-serif font-bold text-xl mb-6">Desempenho por Tema</h3>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={data} layout="vertical">
-                        <XAxis type="number" hide />
-                        <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
-                        <Tooltip />
-                        <Bar dataKey="score" fill="#b45309" radius={[0, 4, 4, 0]} barSize={20} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-                  <h3 className="font-serif font-bold text-xl mb-6">Conquistas</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    {BADGES.map(badge => (
-                      <BadgeCard key={badge.id} badge={badge} earned={userStats.badges.includes(badge.id)} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </main>
-          </div>
-        );
-      }
-
-      return (
-        <div className="min-h-screen bg-stone-50 pb-20">
-          <Header mode={mode} onExit={() => setView('home')} timeLeft={timeLeft} />
-
-          <main className="max-w-3xl mx-auto px-4 py-8">
-            <div className="flex justify-between items-end mb-4">
-              <span className="text-xs font-bold text-bronze-600 tracking-wider uppercase bg-bronze-50 px-2 py-1 rounded">
-                {currentQuestion.topic}
-              </span>
-              <span className="text-sm font-medium text-stone-500">
-                Questão {currentQuestionIndex + 1} de {totalQuestions}
-              </span>
-            </div>
-
-            <ProgressBar current={currentQuestionIndex + 1} total={totalQuestions} />
-
-            <div className="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden">
-              {currentQuestion.image && (
-                <div className="w-full h-48 bg-stone-100 overflow-hidden relative">
-                  <img src={currentQuestion.image} alt="Questão contexto" className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
-                </div>
-              )}
-
-              <div className="p-6 md:p-8">
-                <h2 className="text-xl md:text-2xl font-serif font-bold text-stone-800 mb-6 leading-relaxed">
-                  {currentQuestion.prompt}
-                </h2>
-
-                {mode === 'study' && !showFeedback && (
-                  <div className="mb-6 flex gap-2">
-                    <div className={`text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${hintLevel >= 1 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-400'}`}>
-                      <Lightbulb className="w-3 h-3" /> Dica 1 {hintLevel < 1 && `(${30 - hintTimer}s)`}
-                    </div>
-                    <div className={`text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${hintLevel >= 2 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-400'}`}>
-                      <Lightbulb className="w-3 h-3" /> Dica 2 {hintLevel < 2 && hintLevel >= 1 && `(${60 - hintTimer}s)`}
-                    </div>
-                  </div>
-                )}
-
-                {mode === 'study' && !showFeedback && hintLevel >= 1 && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm text-stone-700 animate-fade-in">
-                    <strong className="text-amber-700 block mb-1">💡 Dica:</strong>
-                    {hintLevel === 1 ? currentQuestion.hintLevel1 : currentQuestion.hintLevel2}
-                  </div>
-                )}
-
-                <div className="animate-slide-up">
-                  {renderQuestionInput()}
-                </div>
-
-                {showFeedback && (
-                  <FeedbackCard
-                    isCorrect={feedbackCorrect}
-                    explanation={currentQuestion.explanation}
-                    onNext={nextQuestion}
-                    isLastQuestion={isLastQuestion}
-                  />
-                )}
-              </div>
-            </div>
-          </main>
-
-          {!showFeedback && (
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 shadow-lg z-40">
-              <div className="max-w-3xl mx-auto flex justify-between items-center">
-                <Button variant="ghost" disabled={currentQuestionIndex === 0} onClick={() => setCurrentQuestionIndex(prev => prev - 1)}>
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Anterior
-                </Button>
-
-                <Button onClick={checkAnswer} disabled={!userAnswers[currentQuestion.id]}>
-                  {mode === 'study' ? 'Verificar Resposta' : (isLastQuestion ? 'Terminar Teste' : 'Próxima')}
-                </Button>
-              </div>
-            </div>
-          )}
+          <h3 class="text-xl font-bold mb-2">${m.name}</h3>
+          <p class="text-stone-500 text-sm mb-6 flex-1">${m.desc}</p>
+          <button onclick="${m.id === 'dashboard' ? "state.view='dashboard'; renderApp()" : `startQuiz('${m.id}')`}" 
+            class="w-full px-4 py-2 bg-bronze-500 hover:bg-bronze-600 text-white rounded-lg font-medium shadow-md shadow-bronze-500/20 transition-all">
+            Começar
+          </button>
         </div>
-      );
-    };
+      `).join('');
 
-    const root = createRoot(document.getElementById('root'));
-    root.render(<App />);
+      return `
+        <main class="max-w-4xl mx-auto px-4 py-12 animate-fade-in">
+          <div class="text-center mb-16 space-y-4">
+            <h1 class="text-4xl md:text-6xl font-serif font-bold text-stone-900 mb-4">
+              Primeiras Comunidades <br /> <span class="text-bronze-600">da Península Ibérica</span>
+            </h1>
+            <p class="text-lg text-stone-600 max-w-2xl mx-auto">
+              Prepara-te para o teste de História. Explora a vida dos caçadores-recoletores,
+              a arte rupestre, e a chegada dos povos mediterrâneos.
+            </p>
+            <button onclick="toggleGuide(true)" class="text-bronze-600 font-bold underline decoration-bronze-300 hover:text-bronze-800 mt-4 inline-block">
+              Como jogar? Ler guia.
+            </button>
+          </div>
+          <div class="grid md:grid-cols-3 gap-6">${modesHtml}</div>
+        </main>
+      `;
+    }
+
+    function renderQuiz() {
+      const q = state.activeQuestions[state.currentQuestionIndex];
+      const total = state.activeQuestions.length;
+      const progress = ((state.currentQuestionIndex + 1) / total) * 100;
+      const ans = state.userAnswers[q.id];
+
+      // Input Rendering Logic
+      let inputHtml = '';
+      
+      if (q.type === 'multiple_choice') {
+        inputHtml = `<div class="space-y-3">` + q.options.map(opt => {
+          const isSelected = ans === opt.id;
+          return `
+            <button onclick="handleInput('single', '${opt.id}')" ${state.showFeedback ? 'disabled' : ''}
+              class="w-full p-4 text-left rounded-lg border-2 transition-all flex items-center gap-3 ${isSelected ? 'border-bronze-500 bg-amber-50 text-stone-900 font-medium' : 'border-stone-200 hover:border-bronze-300 bg-white text-stone-700'}">
+              <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-bronze-500' : 'border-stone-300'}">
+                ${isSelected ? '<div class="w-2.5 h-2.5 rounded-full bg-bronze-500"></div>' : ''}
+              </div>
+              ${opt.text}
+            </button>
+          `;
+        }).join('') + `</div>`;
+      } 
+      else if (q.type === 'multiple_select') {
+        const selected = ans || [];
+        inputHtml = `<div class="space-y-3">` + q.options.map(opt => {
+          const isSel = selected.includes(opt.id);
+          return `
+            <button onclick="handleInput('multi', '${opt.id}')" ${state.showFeedback ? 'disabled' : ''}
+              class="w-full p-4 text-left rounded-lg border-2 transition-all flex items-center gap-3 ${isSel ? 'border-bronze-500 bg-amber-50 text-stone-900 font-medium' : 'border-stone-200 hover:border-bronze-300 bg-white text-stone-700'}">
+              <div class="w-5 h-5 rounded flex items-center justify-center border-2 ${isSel ? 'bg-bronze-500 border-bronze-500 text-white' : 'border-stone-300 bg-white'}">
+                ${isSel ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
+              </div>
+              ${opt.text}
+            </button>
+          `;
+        }).join('') + `</div>`;
+      }
+      else if (q.type === 'dropdown') {
+        inputHtml = `
+          <div class="mt-4">
+            <select onchange="handleInput('single', this.value)" ${state.showFeedback ? 'disabled' : ''}
+              class="w-full p-3 border-2 border-stone-300 rounded-lg text-lg focus:border-bronze-500 outline-none bg-white">
+              <option value="" disabled ${!ans ? 'selected' : ''}>Selecione uma opção...</option>
+              ${q.options.map(opt => `<option value="${opt.id}" ${ans === opt.id ? 'selected' : ''}>${opt.text}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      }
+      else if (q.type === 'matching') {
+        const matches = ans || {};
+        inputHtml = `<div class="space-y-4">` + q.matchingPairs.map(pair => `
+          <div class="bg-white p-4 rounded-lg border border-stone-200 shadow-sm flex flex-col sm:flex-row items-center gap-4 justify-between">
+            <div class="font-semibold text-stone-800 flex-1">${pair.left}</div>
+            <i data-lucide="arrow-right" class="text-stone-400 hidden sm:block"></i>
+            <select onchange="handleInput('matching', {left: '${pair.left}', right: this.value})" ${state.showFeedback ? 'disabled' : ''}
+              class="flex-1 p-2 border border-stone-300 rounded bg-stone-50">
+              <option value="" disabled ${!matches[pair.left] ? 'selected' : ''}>Selecionar...</option>
+              ${pair.rightOptions.map(opt => `<option value="${opt}" ${matches[pair.left] === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+            </select>
+          </div>
+        `).join('') + `</div>`;
+      }
+      else if (q.type === 'ordering') {
+        const currentOrder = ans || [];
+        const remaining = q.options.filter(o => !currentOrder.includes(o.id));
+        inputHtml = `
+          <div class="space-y-4">
+            <div class="bg-stone-100 p-4 rounded-lg min-h-[100px] border-2 border-dashed border-stone-300">
+              <p class="text-xs text-stone-500 mb-2 font-bold uppercase">Sua Ordem:</p>
+              ${currentOrder.length === 0 ? '<p class="text-stone-400 italic text-sm">Clique nas opções abaixo para ordenar</p>' : ''}
+              <div class="space-y-2">
+                ${currentOrder.map((id, idx) => {
+                  const opt = q.options.find(o => o.id === id);
+                  return `
+                    <div class="bg-white p-3 rounded shadow-sm border border-stone-200 flex justify-between items-center cursor-pointer" 
+                         onclick="${!state.showFeedback ? `handleInput('ordering_remove', '${id}')` : ''}">
+                      <div class="flex items-center">
+                        <span class="font-bold text-bronze-600 mr-3">${idx + 1}.</span>
+                        <span>${opt.text}</span>
+                      </div>
+                      ${!state.showFeedback ? '<i data-lucide="x" class="w-4 h-4 text-red-500"></i>' : ''}
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+            <div class="grid grid-cols-1 gap-2">
+              ${remaining.map(opt => `
+                <button onclick="handleInput('ordering_add', '${opt.id}')" ${state.showFeedback ? 'disabled' : ''}
+                  class="p-3 bg-white border border-stone-200 rounded hover:bg-stone-50 text-left w-full flex justify-between">
+                  ${opt.text} <i data-lucide="plus" class="w-4 h-4 text-stone-400"></i>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Hint UI
+      let hintsHtml = '';
+      if (state.mode === 'study' && !state.showFeedback) {
+        hintsHtml = `
+          <div class="mb-6 flex gap-2">
+            <div class="text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${state.hintLevel >= 1 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-400'}">
+              <i data-lucide="lightbulb" class="w-3 h-3"></i> Dica 1 <span class="hint-counter" data-limit="30">${state.hintLevel < 1 ? `(${30 - state.hintTimer}s)` : ''}</span>
+            </div>
+            <div class="text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${state.hintLevel >= 2 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-400'}">
+              <i data-lucide="lightbulb" class="w-3 h-3"></i> Dica 2 <span class="hint-counter" data-limit="60">${state.hintLevel < 2 && state.hintLevel >= 1 ? `(${60 - state.hintTimer}s)` : ''}</span>
+            </div>
+          </div>
+          ${state.hintLevel >= 1 ? `
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm text-stone-700 animate-fade-in">
+              <strong class="text-amber-700 block mb-1">💡 Dica:</strong>
+              ${state.hintLevel === 1 ? q.hintLevel1 : q.hintLevel2}
+            </div>
+          ` : ''}
+        `;
+      }
+
+      // Feedback UI
+      let feedbackHtml = '';
+      if (state.showFeedback) {
+        feedbackHtml = `
+          <div class="mt-6 p-6 rounded-xl border-l-4 shadow-lg animate-fade-in ${state.feedbackCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}">
+            <div class="flex items-start gap-4">
+              <div class="mt-1">
+                <i data-lucide="${state.feedbackCorrect ? 'check-circle' : 'x-circle'}" class="w-8 h-8 ${state.feedbackCorrect ? 'text-green-600' : 'text-red-600'}"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-bold mb-2 ${state.feedbackCorrect ? 'text-green-800' : 'text-red-800'}">
+                  ${state.feedbackCorrect ? 'Correto! Muito bem!' : 'Incorreto.'}
+                </h3>
+                <div class="bg-white/60 p-4 rounded-lg mt-2">
+                  <div class="flex items-center gap-2 mb-2 text-stone-700 font-semibold">
+                    <i data-lucide="lightbulb" class="w-5 h-5 text-amber-500"></i> <span>Explicação:</span>
+                  </div>
+                  <p class="text-stone-700 leading-relaxed">${q.explanation}</p>
+                </div>
+                <button onclick="nextQuestion()" class="mt-4 px-6 py-2 rounded-lg font-bold text-white shadow-md transition-transform active:scale-95 ${state.feedbackCorrect ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}">
+                  ${state.currentQuestionIndex === total - 1 ? 'Ver Resultados' : 'Próxima Questão →'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      const content = `
+        <div class="max-w-3xl mx-auto px-4 py-8 animate-fade-in">
+          <div class="flex justify-between items-end mb-4">
+            <span class="text-xs font-bold text-bronze-600 tracking-wider uppercase bg-bronze-50 px-2 py-1 rounded">${q.topic}</span>
+            <span class="text-sm font-medium text-stone-500">Questão ${state.currentQuestionIndex + 1} de ${total}</span>
+          </div>
+          <div class="w-full h-3 bg-stone-200 rounded-full overflow-hidden mb-6">
+            <div class="h-full bg-bronze-500 transition-all duration-500 ease-out" style="width: ${progress}%"></div>
+          </div>
+          <div class="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden">
+             ${q.image ? `<div class="w-full h-48 bg-stone-100 overflow-hidden relative"><img src="${q.image}" class="w-full h-full object-cover"></div>` : ''}
+             <div class="p-6 md:p-8">
+               <h2 class="text-xl md:text-2xl font-serif font-bold text-stone-800 mb-6 leading-relaxed">${q.prompt}</h2>
+               ${hintsHtml}
+               <div class="animate-slide-up">${inputHtml}</div>
+               ${feedbackHtml}
+             </div>
+          </div>
+          ${!state.showFeedback ? `
+            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 shadow-lg z-30">
+              <div class="max-w-3xl mx-auto flex justify-between items-center">
+                <button onclick="state.currentQuestionIndex--; renderQuiz()" ${state.currentQuestionIndex === 0 ? 'disabled' : ''} class="px-4 py-2 text-stone-600 hover:bg-stone-100 rounded-lg disabled:opacity-50">Anterior</button>
+                <button onclick="submitAnswer()" ${!ans ? 'disabled' : ''} class="px-6 py-2 bg-bronze-500 hover:bg-bronze-600 text-white rounded-lg font-medium shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                   ${state.mode === 'study' ? 'Verificar' : (state.currentQuestionIndex === total - 1 ? 'Terminar' : 'Próxima')}
+                </button>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+      
+      document.getElementById('app').innerHTML = renderHeader() + content;
+      lucideInit();
+    }
+
+    function handleInput(type, value) {
+      if (state.showFeedback) return;
+      const qId = state.activeQuestions[state.currentQuestionIndex].id;
+      
+      if (type === 'single') {
+        state.userAnswers[qId] = value;
+      } else if (type === 'multi') {
+        const current = state.userAnswers[qId] || [];
+        if (current.includes(value)) state.userAnswers[qId] = current.filter(id => id !== value);
+        else state.userAnswers[qId] = [...current, value];
+      } else if (type === 'matching') {
+        const current = state.userAnswers[qId] || {};
+        state.userAnswers[qId] = { ...current, [value.left]: value.right };
+      } else if (type === 'ordering_add') {
+        const current = state.userAnswers[qId] || [];
+        state.userAnswers[qId] = [...current, value];
+      } else if (type === 'ordering_remove') {
+        const current = state.userAnswers[qId] || [];
+        state.userAnswers[qId] = current.filter(id => id !== value);
+      }
+      
+      renderQuiz();
+    }
+
+    function renderDashboard() {
+      // Logic for chart data
+      const topicStats = Object.entries(state.stats.topicPerformance).map(([name, s]) => ({
+        name: name.replace('Comunidades ', '').replace('Povos ', ''),
+        pct: s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0,
+        total: s.total
+      }));
+
+      // Badges
+      const badgesHtml = BADGES.map(b => {
+        const earned = state.stats.badges.includes(b.id);
+        return `
+          <div class="flex flex-col items-center p-4 rounded-xl border-2 transition-all group relative ${earned ? 'bg-amber-50 border-amber-400 shadow-md opacity-100' : 'bg-stone-50 border-stone-200 grayscale opacity-60'}">
+            <div class="text-4xl mb-2">${b.icon}</div>
+            <span class="font-bold text-center text-sm text-stone-800">${b.name}</span>
+            ${earned ? '<span class="text-xs text-amber-600 font-bold mt-1">Conquistado!</span>' : ''}
+            <div class="absolute opacity-0 group-hover:opacity-100 bottom-full mb-2 bg-stone-800 text-white text-xs p-2 rounded shadow-lg pointer-events-none w-40 text-center z-10 transition-opacity">
+               ${b.description}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // CSS Chart
+      const chartHtml = topicStats.length > 0 ? `
+        <div class="space-y-4">
+          ${topicStats.map(stat => `
+            <div>
+              <div class="flex justify-between text-xs font-bold text-stone-600 mb-1">
+                <span>${stat.name}</span>
+                <span>${stat.pct}%</span>
+              </div>
+              <div class="h-4 bg-stone-100 rounded-full overflow-hidden">
+                <div class="h-full rounded-full ${stat.pct > 75 ? 'bg-green-500' : stat.pct > 40 ? 'bg-amber-500' : 'bg-red-500'}" style="width: ${stat.pct}%"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : '<p class="text-stone-400 text-center py-8">Completa um quiz para ver dados.</p>';
+
+      const content = `
+        <main class="max-w-5xl mx-auto px-4 py-8 animate-fade-in">
+          <div class="flex justify-between items-center mb-6">
+            <button onclick="goHome()" class="flex items-center text-stone-600 hover:text-bronze-600 font-medium">
+              <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar ao Menu
+            </button>
+            ${state.lastWrongIds.length > 0 ? `
+              <button onclick="startQuiz('study', true)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-md flex items-center">
+                <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i> Rever ${state.lastWrongIds.length} Erros
+              </button>
+            ` : ''}
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+              <h3 class="text-stone-500 text-sm font-bold uppercase mb-2">Pontuação Total</h3>
+              <p class="text-4xl font-serif font-bold text-bronze-600">${state.stats.totalScore}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+              <h3 class="text-stone-500 text-sm font-bold uppercase mb-2">Jogos Completos</h3>
+              <p class="text-4xl font-serif font-bold text-stone-800">${state.stats.gamesPlayed}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+              <h3 class="text-stone-500 text-sm font-bold uppercase mb-2">Badges</h3>
+              <p class="text-4xl font-serif font-bold text-amber-500">${state.stats.badges.length}/${BADGES.length}</p>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+              <h3 class="font-serif font-bold text-xl mb-6">Desempenho por Tema</h3>
+              ${chartHtml}
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+              <h3 class="font-serif font-bold text-xl mb-6">Conquistas</h3>
+              <div class="grid grid-cols-2 gap-4">${badgesHtml}</div>
+            </div>
+          </div>
+        </main>
+      `;
+
+      document.getElementById('app').innerHTML = renderHeader() + content;
+      lucideInit();
+    }
+
+    function renderGuide() {
+      if (!state.isGuideOpen) return '';
+      return `
+        <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div class="absolute inset-0 bg-stone-900/50 backdrop-blur-sm" onclick="toggleGuide(false)"></div>
+          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in border border-stone-200">
+            <div class="sticky top-0 bg-white border-b border-stone-100 p-4 flex justify-between items-center z-10">
+              <h2 class="text-xl font-serif font-bold text-stone-800 flex items-center gap-2">
+                <i data-lucide="help-circle" class="text-bronze-600"></i> Guia do Utilizador
+              </h2>
+              <button onclick="toggleGuide(false)"><i data-lucide="x" class="w-6 h-6 text-stone-500"></i></button>
+            </div>
+            <div class="p-6 space-y-6">
+              <section>
+                <h3 class="font-bold text-stone-800 mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4 text-bronze-500"></i> Modos</h3>
+                <div class="text-sm text-stone-600 space-y-2">
+                  <p><strong>Modo Estudo:</strong> Sem tempo, feedback imediato e dicas automáticas após 30s/60s.</p>
+                  <p><strong>Modo Teste:</strong> 10 minutos para responder a tudo. Resultados apenas no fim.</p>
+                </div>
+              </section>
+              <section>
+                <h3 class="font-bold text-stone-800 mb-2 flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-500"></i> Progresso</h3>
+                <p class="text-sm text-stone-600">Acompanha a tua evolução no gráfico de barras, que mostra a percentagem de acerto por cada tema histórico.</p>
+              </section>
+            </div>
+            <div class="p-4 border-t border-stone-100 flex justify-end">
+              <button onclick="toggleGuide(false)" class="px-4 py-2 bg-bronze-500 text-white rounded-lg">Entendido</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleGuide(isOpen) {
+      state.isGuideOpen = isOpen;
+      // Re-render apenas o guide overlay se possível, mas aqui renderApp é mais simples
+      const guideContainer = document.getElementById('guide-container');
+      if (guideContainer) {
+        guideContainer.innerHTML = renderGuide();
+        lucideInit();
+      } else {
+        renderApp();
+      }
+    }
+
+    // ==========================================
+    // 6. LOOP PRINCIPAL
+    // ==========================================
+
+    function renderApp() {
+      const app = document.getElementById('app');
+      // Renderizar o conteúdo base
+      if (state.view === 'home') app.innerHTML = renderHeader() + renderHome();
+      else if (state.view === 'quiz') renderQuiz(); // quiz renderiza tudo
+      else if (state.view === 'dashboard') renderDashboard(); // dashboard renderiza tudo
+      
+      // Injetar o Modal do Guia (sempre presente no DOM mas condicionalmente visível)
+      let guideDiv = document.getElementById('guide-container');
+      if (!guideDiv) {
+        guideDiv = document.createElement('div');
+        guideDiv.id = 'guide-container';
+        document.body.appendChild(guideDiv);
+      }
+      guideDiv.innerHTML = renderGuide();
+      
+      lucideInit();
+    }
+
+    // Inicialização
+    renderApp();
+    
   </script>
 </body>
-
 </html>
