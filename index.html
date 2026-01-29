@@ -4,92 +4,43 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cronos: História Ibérica</title>
-  
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Fonts -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
-  
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Tailwind Config -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            serif: ['Merriweather', 'serif'],
-          },
-          colors: {
-            stone: {
-              50: '#fafaf9', 100: '#f5f5f4', 200: '#e7e5e4', 300: '#d6d3d1',
-              400: '#a8a29e', 500: '#78716c', 600: '#57534e', 700: '#44403c',
-              800: '#292524', 900: '#1c1917',
-            },
-            bronze: {
-              500: '#b45309', 600: '#92400e',
-            },
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.5s ease-in-out',
-            'slide-up': 'slideUp 0.5s ease-out',
-          },
-          keyframes: {
-            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
-    body { background-color: #fafaf9; }
-    /* Scrollbar personalizado */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #f5f5f4; }
-    ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
-    
-    .hidden { display: none !important; }
+    body { font-family: 'Inter', sans-serif; }
+    .font-serif { font-family: 'Merriweather', serif; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 10px; }
+    .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body class="text-stone-800 antialiased min-h-screen flex flex-col">
-  
-  <div id="app" class="flex-1 flex flex-col">
-    <!-- O conteúdo será injetado aqui via JavaScript -->
-  </div>
+<body class="bg-stone-50 text-stone-900">
+  <div id="root"></div>
 
-  <script>
-    // ==========================================
-    // 1. DADOS (CONSTANTES & PERGUNTAS COMPLETAS)
-    // ==========================================
-    
-    const BADGES = [
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useCallback } = React;
+
+    const BADGES_CONFIG = [
       { id: 'novice', name: 'Arqueólogo Iniciante', icon: '🏺', description: 'Completa 5 questões corretamente.' },
       { id: 'expert', name: 'Historiador Expert', icon: '📜', description: 'Acumula mais de 500 pontos.' },
       { id: 'perfect', name: 'Perfeccionista', icon: '🎯', description: 'Acerta 100% num modo de teste.' },
       { id: 'streak', name: 'Em Chamas', icon: '🔥', description: 'Acerta 5 questões seguidas.' },
     ];
 
-    const MODES = [
-      { id: 'study', name: 'Modo Estudo', icon: 'book-open', desc: 'Feedback imediato e dicas progressivas.' },
-      { id: 'test', name: 'Modo Teste', icon: 'clock', desc: 'Sem feedback, com temporizador (10 min).' },
-      { id: 'dashboard', name: 'Meu Progresso', icon: 'bar-chart-3', desc: 'Estatísticas e conquistas.' },
-    ];
-
-    // DADOS COMPLETOS DAS PERGUNTAS RESTAURADOS
-    const questionsData = [
-      // ========== COMUNIDADES RECOLETORAS ==========
+    // --- BASE DE DADOS INTEGRAL ---
+    const QUESTIONS_DATA = [
       {
         id: 1, topic: 'Comunidades Recoletoras', type: 'dropdown', points: 10,
         prompt: "Define recoleção:",
         options: [
           { id: "b", text: "Modo de vida do ser humano que não tem local fixo de habitação", isCorrect: false },
-          { id: "a", text: "Atividade que consiste em obter alimentos e recursos diretamente da Natureza", isCorrect: true },
+          { id: "a", text: "Atividade que consiste em obter alimentos e resources diretamente da Natureza", isCorrect: true },
           { id: "c", text: "Produção de alimentos através da agricultura", isCorrect: false }
         ],
         explanation: "Recoleção é a atividade de obter alimentos e recursos diretamente da natureza (frutos, raízes) sem os produzir.",
@@ -279,8 +230,6 @@
         hintLevel1: "Pintavam o que queriam caçar, não o que falhavam.",
         hintLevel2: "Era uma forma de 'ritual' para ter sorte na caça."
       },
-
-      // ========== COMUNIDADES AGROPASTORIS ==========
       {
         id: 16, topic: 'Comunidades Agropastoris', type: 'dropdown', points: 10,
         prompt: "Define comunidades produtoras:",
@@ -349,8 +298,6 @@
         hintLevel1: "Vasos são recipientes, servem para guardar coisas.",
         hintLevel2: "Eram essenciais para guardar as colheitas e água."
       },
-
-      // ========== ARTE MEGALÍTICA ==========
       {
         id: 21, topic: 'Arte e Megalitismo', type: 'dropdown', points: 10,
         prompt: "Define arte megalítica:",
@@ -367,7 +314,7 @@
         id: 22, topic: 'Arte e Megalitismo', type: 'matching', points: 18,
         prompt: "Associa os monumentos megalíticos:",
         matchingPairs: [
-          { left: "Menir", rightOptions: ["Monumento funerário", "Pedra isolada vertical", "Conjunto circular de pedras"], correctRight: "Pedra isolada vertical" },
+          { left: "Menir", rightOptions: ["Pedra isolada vertical", "Círculo de pedras", "Túmulo"], correctRight: "Pedra isolada vertical" },
           { left: "Anta ou Dólmen", rightOptions: ["Pedra isolada vertical", "Monumento funerário (câmara)", "Conjunto circular de pedras"], correctRight: "Monumento funerário (câmara)" },
           { left: "Cromeleque", rightOptions: ["Pedra isolada vertical", "Túmulo simples", "Conjunto de menires em círculo"], correctRight: "Conjunto de menires em círculo" }
         ],
@@ -388,8 +335,6 @@
         hintLevel1: "Precisavam de uma 'câmara' para colocar os corpos.",
         hintLevel2: "Cromeleques e menires tinham outras funções religiosas."
       },
-
-      // ========== POVOS PENINSULARES ==========
       {
         id: 24, topic: 'Povos Peninsulares', type: 'matching', points: 20,
         prompt: "Identifica as características dos povos que chegaram à Península Ibérica:",
@@ -419,9 +364,9 @@
         id: 26, topic: 'Povos Peninsulares', type: 'ordering', points: 15,
         prompt: "Classifica por ordem de antiguidade os povos que habitaram a Península Ibérica:",
         options: [
-          { id: "2", text: "Celtas", isCorrect: false },
-          { id: "1", text: "Iberos", isCorrect: true },
-          { id: "3", text: "Celtiberos", isCorrect: true }
+          { id: "2", text: "Celtas" },
+          { id: "1", text: "Iberos" },
+          { id: "3", text: "Celtiberos" }
         ],
         correctOrder: ["1", "2", "3"],
         explanation: "Primeiro chegaram os Iberos, depois os Celtas, e da mistura dos dois surgiram os Celtiberos.",
@@ -468,8 +413,6 @@
         hintLevel1: "Pensa nas características dos povos do Norte da Europa.",
         hintLevel2: "Os Iberos é que eram morenos e de estatura média."
       },
-
-      // ========== POVOS MEDITERRÂNEOS ==========
       {
         id: 30, topic: 'Povos Mediterrâneos', type: 'multiple_select', points: 16,
         prompt: "O que atraía os Povos do Mediterrâneo à Península Ibérica?",
@@ -527,22 +470,20 @@
       },
       {
         id: 34, topic: 'Povos Mediterrâneos', type: 'ordering', points: 20,
-        prompt: "Ordena cronologicamente os acontecimentos (do mais antigo para o mais recente):",
+        prompt: "Ordena cronologicamente os acontecimentos (do mais antigo):",
         options: [
-          { id: "4", text: "Chegada à Península Ibérica dos Celtas", isCorrect: false },
-          { id: "3", text: "Surgimento dos Iberos", isCorrect: false },
-          { id: "2", text: "Surgimento das comunidades agropastoris", isCorrect: false },
-          { id: "1", text: "Aparecimento das primeiras comunidades recoletoras", isCorrect: false },
-          { id: "5", text: "Surgimento dos Celtiberos", isCorrect: true },
-          { id: "6", text: "Chegada à Península Ibérica dos povos do Mediterrâneo", isCorrect: true }
+          { id: "4", text: "Chegada dos Celtas" },
+          { id: "3", text: "Surgimento dos Iberos" },
+          { id: "2", text: "Surgimento das comunidades agropastoris" },
+          { id: "1", text: "Aparecimento das comunidades recoletoras" },
+          { id: "5", text: "Surgimento dos Celtiberos" },
+          { id: "6", text: "Chegada dos povos do Mediterrâneo" }
         ],
         correctOrder: ["1", "2", "3", "4", "5", "6"],
         explanation: "Cronologia: Recoletores → Agropastoris → Iberos → Celtas → Celtiberos → Povos Mediterrâneos.",
         hintLevel1: "Começa com os mais antigos (caçadores-recoletores).",
         hintLevel2: "Termina com os povos que vieram comerciar (Fenícios, Gregos, Cartagineses)."
       },
-
-      // ========== QUESTÕES ADICIONAIS DE CONSOLIDAÇÃO ==========
       {
         id: 35, topic: 'Comunidades Recoletoras', type: 'multiple_choice', points: 10,
         prompt: "Qual a principal diferença entre comunidades recoletoras e produtoras?",
@@ -564,7 +505,7 @@
           { id: "a", text: "O desenvolvimento da agricultura e pastorícia", isCorrect: true },
           { id: "d", text: "O comércio com outros povos", isCorrect: false }
         ],
-        explanation: "Com a agricultura, precisavam de ficar perto das plantações. Com a pastorícia, perto dos rebanhos. Isso levou ao sedentarismo.",
+        explanation: "Com the agricultura, precisavam de ficar perto das plantações. Com the pastorícia, perto dos rebanhos. Isso levou ao sedentarismo.",
         hintLevel1: "Não podiam abandonar as suas plantações.",
         hintLevel2: "Precisavam de cuidar das culturas e animais."
       },
@@ -619,7 +560,7 @@
         ],
         explanation: "A roda revolucionou o transporte: carroças puxadas por animais permitiam transportar mais carga a maiores distâncias.",
         hintLevel1: "Pensa em carroças e carros.",
-        hintLevel2: "Também usavam na olaria (roda de oleiro), mas o transporte foi o principal impacto."
+        hintLevel2: "Impacto no comércio e transporte."
       },
       {
         id: 41, topic: 'Arte e Megalitismo', type: 'matching', points: 18,
@@ -639,10 +580,10 @@
         prompt: "Faz a legenda da imagem:",
         image: "./image5.jpg",
         matchingPairs: [
-          { left: "Celtiberos", rightOptions: ["1", "2", "4"], correctRight: "2" },
-          { left: "Celtas", rightOptions: ["1", "2", "3"], correctRight: "3" },
-          { left: "Iberos", rightOptions: ["1", "2", "4"], correctRight: "1" },
-          { left: "Lusitanos", rightOptions: ["1", "3", "4"], correctRight: "4" }
+          { left: "Celtiberos", rightOptions: ["1", "2", "3", "4"], correctRight: "2" },
+          { left: "Celtas", rightOptions: ["1", "2", "3", "4"], correctRight: "3" },
+          { left: "Iberos", rightOptions: ["1", "2", "3", "4"], correctRight: "1" },
+          { left: "Lusitanos", rightOptions: ["1", "2", "3", "4"], correctRight: "4" }
         ],
         explanation: "Iberos=vieram do Norte de África. Celtas=Povo do Centro da Europa. Lusitanos=situados entre o Tejo e o Mondego.",
         hintLevel1: "Celtiberos=união dos Celtas e dos Iberos.",
@@ -682,12 +623,12 @@
         prompt: "Faz a legenda da imagem:",
         image: "./image2.jpg",
         matchingPairs: [
-          { left: "Agricultura", rightOptions: ["A", "B", "C"], correctRight: "A" },
-          { left: "Construção de casas", rightOptions: ["D", "E", "F"], correctRight: "F" },
-          { left: "Olaria", rightOptions: ["B", "C", "D"], correctRight: "D" },
-          { left: "Pastorícia", rightOptions: ["B", "C", "D"], correctRight: "B" },
-          { left: "Cestaria", rightOptions: ["B", "C", "D"], correctRight: "C" },
-          { left: "Tecelagem", rightOptions: ["D", "E", "F"], correctRight: "E" }
+          { left: "Agricultura", rightOptions: ["A", "B", "C", "D", "E", "F"], correctRight: "A" },
+          { left: "Construção de casas", rightOptions: ["A", "B", "C", "D", "E", "F"], correctRight: "F" },
+          { left: "Olaria", rightOptions: ["A", "B", "C", "D", "E", "F"], correctRight: "D" },
+          { left: "Pastorícia", rightOptions: ["A", "B", "C", "D", "E", "F"], correctRight: "B" },
+          { left: "Cestaria", rightOptions: ["A", "B", "C", "D", "E", "F"], correctRight: "C" },
+          { left: "Tecelagem", rightOptions: ["A", "B", "C", "D", "E", "F"], correctRight: "E" }
         ],
         explanation: "Agricultura=plantação de cereais. Pastorícia=criação de animais. Construção de casas=habitações permanentes.",
         hintLevel1: "Agricultura = plantações; Pastorícia = criação de animais.",
@@ -695,653 +636,520 @@
       }
     ];
 
-    // ==========================================
-    // 2. ESTADO DA APLICAÇÃO (STATE MANAGEMENT)
-    // ==========================================
-    
-    const state = {
-      view: 'home', // 'home', 'quiz', 'dashboard'
-      mode: 'study', // 'study', 'test'
-      activeQuestions: [],
-      currentQuestionIndex: 0,
-      userAnswers: {}, // { questionId: answer }
-      showFeedback: false,
-      feedbackCorrect: false,
-      hintLevel: 0,
-      hintTimer: 0,
-      timeLeft: null,
-      timerInterval: null,
-      hintInterval: null,
-      lastWrongIds: [],
-      isGuideOpen: false,
-      
-      // Persistent Stats
-      stats: JSON.parse(localStorage.getItem('cronos_stats')) || {
-        totalScore: 0,
-        gamesPlayed: 0,
-        badges: [],
-        history: [],
-        topicPerformance: {}
+    const TOPICS = [...new Set(QUESTIONS_DATA.map(q => q.topic))];
+
+    // --- COMPONENTE QUIZ ---
+    const Quiz = ({ questions: initialQuestions, mode, onComplete }) => {
+      const [allSessionQuestions, setAllSessionQuestions] = useState(initialQuestions);
+      const [currentBatch, setCurrentBatch] = useState(initialQuestions);
+      const [currIdx, setCurrIdx] = useState(0);
+      const [ans, setAns] = useState({});
+      const [showFB, setShowFB] = useState(false);
+      const [hintLvl, setHintLvl] = useState(0);
+      const [hintT, setHintT] = useState(0);
+      const [showSummary, setShowSummary] = useState(false);
+      const [streak, setStreak] = useState(0);
+
+      const q = currentBatch[currIdx];
+
+      useEffect(() => {
+        let int;
+        if (mode !== 'test' && !showFB && !showSummary) {
+          int = setInterval(() => {
+            setHintT(p => {
+              const next = p + 1;
+              if (next === 30) setHintLvl(1);
+              if (next === 60) setHintLvl(2);
+              return next;
+            });
+          }, 1000);
+        }
+        return () => clearInterval(int);
+      }, [mode, showFB, currIdx, showSummary]);
+
+      const isCorrect = useCallback((q, a) => {
+        if (!a) return false;
+        if (q.type === 'multiple_choice' || q.type === 'dropdown') return q.options.find(o => o.id === a)?.isCorrect;
+        if (q.type === 'multiple_select') {
+          const cIds = q.options.filter(o => o.isCorrect).map(o => o.id);
+          return Array.isArray(a) && a.length === cIds.length && cIds.every(id => a.includes(id));
+        }
+        if (q.type === 'matching') return q.matchingPairs.every(p => a[p.left] === p.correctRight);
+        if (q.type === 'ordering') return JSON.stringify(a) === JSON.stringify(q.correctOrder);
+        return false;
+      }, []);
+
+      const handleNext = () => {
+        if (mode !== 'test' && !showFB) { 
+          setShowFB(true); 
+          if (isCorrect(q, ans[q.id])) {
+            setStreak(prev => prev + 1);
+          } else {
+            setStreak(0);
+          }
+          return; 
+        }
+        
+        if (currIdx < currentBatch.length - 1) {
+          setCurrIdx(currIdx + 1);
+          setShowFB(!!ans[currentBatch[currIdx + 1].id] && mode !== 'test');
+          setHintLvl(0);
+          setHintT(0);
+        } else {
+          const wrongQs = currentBatch.filter(quest => !isCorrect(quest, ans[quest.id]));
+          
+          if (mode === 'test') {
+            const finalScore = currentBatch.reduce((acc, quest) => acc + (isCorrect(quest, ans[quest.id]) ? quest.points : 0), 0);
+            const correctIds = currentBatch.filter(quest => isCorrect(quest, ans[quest.id])).map(quest => quest.id);
+            const isPerfect = wrongQs.length === 0;
+            onComplete({ correct: currentBatch.length - wrongQs.length, total: currentBatch.length, score: finalScore, answers: ans, correctIds, isPerfect, streak });
+          } else {
+            if (wrongQs.length > 0) {
+              setShowSummary(true);
+            } else {
+              const finalScore = allSessionQuestions.reduce((acc, quest) => acc + (isCorrect(quest, ans[quest.id]) ? quest.points : 0), 0);
+              const correctIds = allSessionQuestions.map(quest => quest.id);
+              onComplete({ correct: allSessionQuestions.length, total: allSessionQuestions.length, score: finalScore, answers: ans, correctIds, isPerfect: true, streak });
+            }
+          }
+        }
+      };
+
+      const handlePrev = () => {
+        if (currIdx > 0) {
+          setCurrIdx(currIdx - 1);
+          setShowFB(mode !== 'test'); 
+        }
+      };
+
+      const startCorrection = () => {
+        const wrongQs = currentBatch.filter(quest => !isCorrect(quest, ans[quest.id]));
+        setCurrentBatch(wrongQs);
+        setCurrIdx(0);
+        setShowFB(false);
+        setShowSummary(false);
+        setHintLvl(0);
+        setHintT(0);
+      };
+
+      if (showSummary) {
+        const currentBatchWrongCount = currentBatch.filter(quest => !isCorrect(quest, ans[quest.id])).length;
+        return (
+          <div className="max-w-4xl mx-auto px-6 py-16 animate-fade-in text-center">
+            <div className="bg-white p-12 rounded-[3rem] border border-stone-200 shadow-2xl">
+              <h2 className="text-4xl font-serif font-bold text-stone-900 mb-6">Resumo da Jornada</h2>
+              <div className="grid grid-cols-2 gap-8 mb-10">
+                <div className="bg-green-50 p-6 rounded-3xl border border-green-100">
+                  <p className="text-sm font-bold text-green-600 uppercase">Acertos</p>
+                  <p className="text-4xl font-serif font-bold text-green-800">{currentBatch.length - currentBatchWrongCount}</p>
+                </div>
+                <div className="bg-red-50 p-6 rounded-3xl border border-red-100">
+                  <p className="text-sm font-bold text-red-600 uppercase">Erros a Corrigir</p>
+                  <p className="text-4xl font-serif font-bold text-red-800">{currentBatchWrongCount}</p>
+                </div>
+              </div>
+              <p className="text-stone-500 mb-10 font-medium">Concluíste este lote. Ainda tens {currentBatchWrongCount} questões para dominar.</p>
+              <div className="flex gap-4">
+                <button onClick={() => {
+                  const finalScore = allSessionQuestions.reduce((acc, quest) => acc + (isCorrect(quest, ans[quest.id]) ? quest.points : 0), 0);
+                  const correctIds = allSessionQuestions.filter(quest => isCorrect(quest, ans[quest.id])).map(quest => quest.id);
+                  onComplete({ correct: allSessionQuestions.length - currentBatchWrongCount, total: allSessionQuestions.length, score: finalScore, answers: ans, correctIds, isPerfect: false, streak });
+                }} className="flex-1 bg-stone-100 hover:bg-stone-200 py-5 rounded-2xl font-bold text-stone-600">Sair Agora</button>
+                <button onClick={startCorrection} className="flex-[2] bg-amber-600 hover:bg-amber-700 text-white py-5 rounded-2xl font-bold shadow-lg">Corrigir Erros</button>
+              </div>
+            </div>
+          </div>
+        );
       }
+
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in custom-scrollbar">
+          <div className="mb-8 flex justify-between items-end">
+            <div className="flex-1">
+              <span className="text-xs font-bold text-amber-600 uppercase tracking-widest bg-amber-50 px-2 py-1 rounded">{q.topic}</span>
+              <h2 className="text-2xl font-serif font-bold text-stone-900 mt-3 leading-tight">{q.prompt}</h2>
+            </div>
+            <div className="ml-4 bg-stone-100 px-3 py-1 rounded-full text-stone-500 font-bold text-sm whitespace-nowrap">{currIdx + 1} / {currentBatch.length}</div>
+          </div>
+          
+          {q.image && (
+            <div className="mb-6 flex justify-center">
+              <img src={q.image} alt="Questão" className="max-h-64 rounded-xl border-2 border-stone-200 shadow-md object-contain bg-white p-2" />
+            </div>
+          )}
+          
+          {mode !== 'test' && !showFB && (
+            <div className="mb-6 flex gap-4">
+              <div className={`text-xs px-3 py-1.5 rounded-full border transition-all ${hintLvl >= 1 ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-sm' : 'bg-stone-100 text-stone-400 border-stone-200'}`}>Dica 1 {hintLvl < 1 && `(${30 - hintT}s)`}</div>
+              <div className={`text-xs px-3 py-1.5 rounded-full border transition-all ${hintLvl >= 2 ? 'bg-amber-100 text-amber-700 border-amber-300 shadow-sm' : 'bg-stone-100 text-stone-400 border-stone-200'}`}>Dica 2 {hintLvl < 2 && `(${60 - hintT}s)`}</div>
+            </div>
+          )}
+
+          {hintLvl >= 1 && !showFB && <div className="mb-8 bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-xl text-stone-700 animate-slide-up shadow-sm font-medium">💡 {hintLvl === 1 ? q.hintLevel1 : q.hintLevel2}</div>}
+
+          <div className="mb-10 space-y-4">
+            {q.type === 'multiple_choice' && q.options.map(o => (
+              <button key={o.id} disabled={showFB && mode === 'test'} onClick={() => setAns(p => ({...p, [q.id]: o.id}))} 
+                className={`w-full p-5 text-left border-2 rounded-2xl transition-all shadow-sm ${ans[q.id] === o.id ? 'border-amber-600 bg-amber-50' : 'border-stone-200 hover:border-amber-200 bg-white'} ${showFB && o.isCorrect ? 'border-green-500 bg-green-50' : ''}`}>
+                <div className="flex items-center gap-4">
+                  <span className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${ans[q.id] === o.id ? 'bg-amber-600 text-white' : 'bg-stone-100 text-stone-400'}`}>{o.id.toUpperCase()}</span>
+                  <span className="text-lg">{o.text}</span>
+                </div>
+              </button>
+            ))}
+            
+            {q.type === 'multiple_select' && q.options.map(o => {
+              const selected = ans[q.id] || [];
+              const isSel = selected.includes(o.id);
+              return (
+                <button key={o.id} disabled={showFB && mode === 'test'} onClick={() => {
+                  const next = isSel ? selected.filter(i => i !== o.id) : [...selected, o.id];
+                  setAns(p => ({...p, [q.id]: next}));
+                }} className={`w-full p-5 text-left border-2 rounded-2xl flex justify-between items-center transition-all ${isSel ? 'border-amber-600 bg-amber-50' : 'border-stone-200 bg-white'}`}>
+                  <span className="text-lg">{o.text}</span>
+                  <div className={`w-6 h-6 border-2 rounded flex items-center justify-center ${isSel ? 'bg-amber-600 border-amber-600 text-white' : 'border-stone-300'}`}>{isSel && '✓'}</div>
+                </button>
+              );
+            })}
+
+            {q.type === 'matching' && q.matchingPairs.map(p => (
+              <div key={p.left} className="flex flex-col sm:flex-row gap-4 items-center bg-white p-4 rounded-2xl border-2 border-stone-100 shadow-sm">
+                <div className="flex-1 font-bold text-stone-700 text-lg">{p.left}</div>
+                <select disabled={showFB && mode === 'test'} value={(ans[q.id] || {})[p.left] || ''} 
+                  onChange={e => setAns(p_ => ({...p_, [q.id]: {...(p_[q.id] || {}), [p.left]: e.target.value}}))} 
+                  className="flex-1 p-3 bg-stone-50 border border-stone-200 rounded-xl outline-none focus:ring-2 focus:ring-amber-500">
+                  <option value="">Selecionar...</option>
+                  {p.rightOptions.map(ro => <option key={ro} value={ro}>{ro}</option>)}
+                </select>
+              </div>
+            ))}
+
+            {q.type === 'ordering' && (
+              <div className="space-y-6">
+                <div className="bg-stone-100 p-6 rounded-2xl border-2 border-dashed border-stone-300 min-h-[80px] flex flex-wrap gap-3 items-center">
+                  {(ans[q.id] || []).map((id, i) => (
+                    <div key={id} onClick={() => !(showFB && mode === 'test') && setAns(p_ => ({...p_, [q.id]: (p_[q.id] || []).filter(item => item !== id)}))} className="bg-amber-600 text-white px-4 py-2 rounded-xl cursor-pointer shadow-md transform hover:scale-105 transition-transform flex items-center gap-2">
+                      <span className="bg-white/20 px-2 rounded font-bold">{i+1}</span>
+                      {q.options.find(o => o.id === id)?.text}
+                    </div>
+                  ))}
+                  {(ans[q.id] || []).length === 0 && <span className="text-stone-400 italic">Clica nas opções abaixo para ordenar...</span>}
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {q.options.filter(o => !(ans[q.id] || []).includes(o.id)).map(o => (
+                    <button key={o.id} disabled={showFB && mode === 'test'} onClick={() => setAns(p_ => ({...p_, [q.id]: [...(p_ [q.id] || []), o.id]}))} className="p-4 border-2 border-stone-200 rounded-xl bg-white hover:border-amber-400 transition-colors text-stone-600 font-medium">{o.text}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {q.type === 'dropdown' && (
+              <div className="relative">
+                <select disabled={showFB && mode === 'test'} value={ans[q.id] || ''} onChange={e => setAns(p => ({...p, [q.id]: e.target.value}))} 
+                  className="w-full p-5 border-2 rounded-2xl bg-white outline-none focus:ring-2 focus:ring-amber-500 appearance-none text-lg">
+                  <option value="">Escolhe a resposta correta...</option>
+                  {q.options.map(o => <option key={o.id} value={o.id}>{o.text}</option>)}
+                </select>
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400">▼</div>
+              </div>
+            )}
+          </div>
+
+          {showFB && (
+            <div className={`mb-10 p-8 rounded-3xl border-l-8 animate-slide-up shadow-xl ${isCorrect(q, ans[q.id]) ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`}>
+              <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
+                {isCorrect(q, ans[q.id]) ? '✨ Resposta Correta!' : '📜 Reflexão Histórica'}
+              </h3>
+              <p className="text-stone-700 text-lg leading-relaxed">{q.explanation}</p>
+            </div>
+          )}
+
+          <div className="flex justify-between items-center gap-4">
+            <button 
+              onClick={handlePrev} 
+              disabled={currIdx === 0} 
+              className={`px-8 py-4 rounded-2xl font-bold text-lg border-2 transition-all ${currIdx === 0 ? 'opacity-0 pointer-events-none' : 'border-stone-200 text-stone-500 hover:bg-stone-100'}`}
+            >
+              Anterior
+            </button>
+            <button onClick={handleNext} disabled={!ans[q.id] && mode === 'test'} className="bg-amber-600 hover:bg-amber-700 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-amber-200 transition-all disabled:opacity-50 active:scale-95">
+              {showFB ? (currIdx === currentBatch.length - 1 ? 'Concluir' : 'Próxima') : (mode === 'test' ? 'Submeter' : 'Verificar')}
+            </button>
+          </div>
+        </div>
+      );
     };
 
-    // ==========================================
-    // 3. FUNÇÕES UTILITÁRIAS
-    // ==========================================
-    
-    function saveStats() {
-      localStorage.setItem('cronos_stats', JSON.stringify(state.stats));
-    }
-
-    function formatTime(seconds) {
-      const mins = Math.floor(seconds / 60);
-      const secs = seconds % 60;
-      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function lucideInit() {
-      if (window.lucide) window.lucide.createIcons();
-    }
-    
-    function goHome() {
-      clearInterval(state.timerInterval);
-      clearInterval(state.hintInterval);
-      state.view = 'home';
-      renderApp();
-    }
-
-    // ==========================================
-    // 4. LÓGICA DO QUIZ
-    // ==========================================
-
-    function startQuiz(mode, isReview = false) {
-      state.mode = mode;
-      state.view = 'quiz';
-      state.currentQuestionIndex = 0;
-      state.userAnswers = {};
-      state.showFeedback = false;
-      state.hintLevel = 0;
-      state.hintTimer = 0;
-      
-      // Configurar perguntas
-      if (isReview) {
-        state.activeQuestions = questionsData.filter(q => state.lastWrongIds.includes(q.id));
-      } else {
-        // Reset perguntas (aqui poderia ter shuffle)
-        state.activeQuestions = [...questionsData];
-      }
-
-      // Configurar Timer
-      clearInterval(state.timerInterval);
-      if (mode === 'test') {
-        state.timeLeft = 600; // 10 mins
-        state.timerInterval = setInterval(() => {
-          if (state.timeLeft > 0) {
-            state.timeLeft--;
-            const timerDisplay = document.getElementById('timer-display');
-            if (timerDisplay) timerDisplay.innerText = formatTime(state.timeLeft);
-            
-            const timerContainer = document.getElementById('timer-container');
-            if(timerContainer && state.timeLeft < 60) timerContainer.classList.add('text-red-600', 'bg-red-50', 'animate-pulse');
-          } else {
-            finishQuiz();
-          }
-        }, 1000);
-      } else {
-        state.timeLeft = null;
-        startHintTimer();
-      }
-      
-      renderApp();
-    }
-
-    function startHintTimer() {
-      clearInterval(state.hintInterval);
-      if (state.mode === 'study' && !state.showFeedback) {
-        state.hintInterval = setInterval(() => {
-          state.hintTimer++;
-          if (state.hintTimer === 30) { state.hintLevel = 1; renderQuiz(); }
-          if (state.hintTimer === 60) { state.hintLevel = 2; renderQuiz(); }
-          // Atualiza contadores na UI se existirem
-          const hintCounters = document.querySelectorAll('.hint-counter');
-          hintCounters.forEach(el => {
-             const limit = parseInt(el.dataset.limit);
-             if(limit > state.hintTimer) el.innerText = `(${limit - state.hintTimer}s)`;
-             else el.innerText = '';
-          });
-        }, 1000);
-      }
-    }
-
-    function checkAnswer(question, answer) {
-      if (!answer) return false;
-      if (question.type === 'multiple_choice' || question.type === 'dropdown') {
-        const opt = question.options.find(o => o.id === answer);
-        return opt ? opt.isCorrect : false;
-      }
-      if (question.type === 'multiple_select') {
-        const correctIds = question.options.filter(o => o.isCorrect).map(o => o.id);
-        if (answer.length !== correctIds.length) return false;
-        return correctIds.every(id => answer.includes(id));
-      }
-      if (question.type === 'matching') {
-        return question.matchingPairs.every(pair => answer[pair.left] === pair.correctRight);
-      }
-      if (question.type === 'ordering') {
-        return JSON.stringify(answer) === JSON.stringify(question.correctOrder);
-      }
-      return false;
-    }
-
-    function submitAnswer() {
-      const q = state.activeQuestions[state.currentQuestionIndex];
-      const ans = state.userAnswers[q.id];
-      
-      if (state.mode === 'study') {
-        const isCorrect = checkAnswer(q, ans);
-        state.feedbackCorrect = isCorrect;
-        state.showFeedback = true;
-        clearInterval(state.hintInterval);
-        renderQuiz();
-      } else {
-        nextQuestion();
-      }
-    }
-
-    function nextQuestion() {
-      if (state.currentQuestionIndex < state.activeQuestions.length - 1) {
-        state.currentQuestionIndex++;
-        state.showFeedback = false;
-        state.hintLevel = 0;
-        state.hintTimer = 0;
-        if(state.mode === 'study') startHintTimer();
-        renderQuiz();
-      } else {
-        finishQuiz();
-      }
-    }
-
-    function finishQuiz() {
-      clearInterval(state.timerInterval);
-      clearInterval(state.hintInterval);
-
-      let correctCount = 0;
-      let sessionScore = 0;
-      let wrongIds = [];
-      let currentStreak = 0;
-      let maxStreak = 0;
-
-      // Calcular Stats
-      state.activeQuestions.forEach(q => {
-        const ans = state.userAnswers[q.id];
-        const isCorrect = checkAnswer(q, ans);
-        
-        // Topic Stats
-        if (!state.stats.topicPerformance[q.topic]) {
-          state.stats.topicPerformance[q.topic] = { correct: 0, total: 0 };
-        }
-        state.stats.topicPerformance[q.topic].total++;
-
-        if (isCorrect) {
-          correctCount++;
-          sessionScore += q.points;
-          state.stats.topicPerformance[q.topic].correct++;
-          currentStreak++;
-          if (currentStreak > maxStreak) maxStreak = currentStreak;
-        } else {
-          wrongIds.push(q.id);
-          currentStreak = 0;
-        }
-      });
-
-      state.lastWrongIds = wrongIds;
-      state.stats.totalScore += sessionScore;
-      state.stats.gamesPlayed++;
-      state.stats.history.push({ date: new Date().toLocaleDateString(), score: sessionScore, total: state.activeQuestions.length * 10 });
-
-      // Badges Logic
-      const badges = state.stats.badges;
-      if (state.activeQuestions.length >= 5 && correctCount >= 5 && !badges.includes('novice')) badges.push('novice');
-      if (state.stats.totalScore >= 500 && !badges.includes('expert')) badges.push('expert');
-      if (maxStreak >= 5 && !badges.includes('streak')) badges.push('streak');
-      if (state.mode === 'test' && wrongIds.length === 0 && state.activeQuestions.length >= 5 && !badges.includes('perfect')) badges.push('perfect');
-
-      saveStats();
-      state.view = 'dashboard';
-      renderApp();
-    }
-
-    // ==========================================
-    // 5. RENDERIZAÇÃO (DOM MANIPULATION)
-    // ==========================================
-
-    function renderHeader() {
-      return `
-        <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-stone-200 shadow-sm">
-          <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="goHome()">
-              <div class="bg-bronze-500 p-1.5 rounded-lg text-white">🏺</div>
-              <div>
-                <h1 class="font-serif font-bold text-stone-800 leading-tight hidden sm:block">Cronos</h1>
-                <p class="text-xs text-stone-500 uppercase tracking-wider font-semibold">História Ibérica</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3">
-              ${state.mode === 'test' && state.view === 'quiz' ? `
-                <div id="timer-container" class="flex items-center gap-2 font-mono font-bold text-lg px-3 py-1 rounded-lg text-stone-700 bg-stone-100 transition-colors">
-                  <i data-lucide="clock" class="w-5 h-5"></i>
-                  <span id="timer-display">${formatTime(state.timeLeft)}</span>
-                </div>
-              ` : ''}
-              <button onclick="toggleGuide(true)" class="p-2 text-stone-500 hover:bg-stone-100 rounded-full transition-colors" title="Ajuda">
-                <i data-lucide="help-circle" class="w-6 h-6"></i>
-              </button>
-              ${state.view !== 'home' ? `
-                <button onclick="goHome()" class="px-3 py-1 text-sm font-medium text-stone-600 hover:bg-stone-100 rounded-lg">Sair</button>
-              ` : ''}
-            </div>
+    const UserGuide = ({ onClose }) => (
+      <div className="fixed inset-0 z-[100] bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-6">
+        <div className="bg-white max-w-2xl w-full rounded-[2.5rem] shadow-2xl overflow-hidden animate-slide-up flex flex-col max-h-[90vh]">
+          <div className="bg-amber-600 p-8 text-white relative">
+            <h2 className="text-3xl font-serif font-bold">Guia do Utilizador 📖</h2>
+            <p className="text-amber-100 mt-2">Descobre como navegar nas crónicas do Cronos.</p>
+            <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center font-bold transition-all">✕</button>
           </div>
-        </header>
-      `;
-    }
-
-    function renderHome() {
-      const modesHtml = MODES.map(m => `
-        <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all p-8 flex flex-col items-center text-center border border-stone-100 group">
-          <div class="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-6 text-stone-600 group-hover:bg-bronze-100 group-hover:text-bronze-600 transition-colors">
-            <i data-lucide="${m.icon}" class="w-8 h-8"></i>
-          </div>
-          <h3 class="text-xl font-bold mb-2">${m.name}</h3>
-          <p class="text-stone-500 text-sm mb-6 flex-1">${m.desc}</p>
-          <button onclick="${m.id === 'dashboard' ? "state.view='dashboard'; renderApp()" : `startQuiz('${m.id}')`}" 
-            class="w-full px-4 py-2 bg-bronze-500 hover:bg-bronze-600 text-white rounded-lg font-medium shadow-md shadow-bronze-500/20 transition-all">
-            Começar
-          </button>
-        </div>
-      `).join('');
-
-      return `
-        <main class="max-w-4xl mx-auto px-4 py-12 animate-fade-in">
-          <div class="text-center mb-16 space-y-4">
-            <h1 class="text-4xl md:text-6xl font-serif font-bold text-stone-900 mb-4">
-              Primeiras Comunidades <br /> <span class="text-bronze-600">da Península Ibérica</span>
-            </h1>
-            <p class="text-lg text-stone-600 max-w-2xl mx-auto">
-              Prepara-te para o teste de História. Explora a vida dos caçadores-recoletores,
-              a arte rupestre, e a chegada dos povos mediterrâneos.
-            </p>
-            <button onclick="toggleGuide(true)" class="text-bronze-600 font-bold underline decoration-bronze-300 hover:text-bronze-800 mt-4 inline-block">
-              Como jogar? Ler guia.
-            </button>
-          </div>
-          <div class="grid md:grid-cols-3 gap-6">${modesHtml}</div>
-        </main>
-      `;
-    }
-
-    function renderQuiz() {
-      const q = state.activeQuestions[state.currentQuestionIndex];
-      const total = state.activeQuestions.length;
-      const progress = ((state.currentQuestionIndex + 1) / total) * 100;
-      const ans = state.userAnswers[q.id];
-
-      // Input Rendering Logic
-      let inputHtml = '';
-      
-      if (q.type === 'multiple_choice') {
-        inputHtml = `<div class="space-y-3">` + q.options.map(opt => {
-          const isSelected = ans === opt.id;
-          return `
-            <button onclick="handleInput('single', '${opt.id}')" ${state.showFeedback ? 'disabled' : ''}
-              class="w-full p-4 text-left rounded-lg border-2 transition-all flex items-center gap-3 ${isSelected ? 'border-bronze-500 bg-amber-50 text-stone-900 font-medium' : 'border-stone-200 hover:border-bronze-300 bg-white text-stone-700'}">
-              <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${isSelected ? 'border-bronze-500' : 'border-stone-300'}">
-                ${isSelected ? '<div class="w-2.5 h-2.5 rounded-full bg-bronze-500"></div>' : ''}
-              </div>
-              ${opt.text}
-            </button>
-          `;
-        }).join('') + `</div>`;
-      } 
-      else if (q.type === 'multiple_select') {
-        const selected = ans || [];
-        inputHtml = `<div class="space-y-3">` + q.options.map(opt => {
-          const isSel = selected.includes(opt.id);
-          return `
-            <button onclick="handleInput('multi', '${opt.id}')" ${state.showFeedback ? 'disabled' : ''}
-              class="w-full p-4 text-left rounded-lg border-2 transition-all flex items-center gap-3 ${isSel ? 'border-bronze-500 bg-amber-50 text-stone-900 font-medium' : 'border-stone-200 hover:border-bronze-300 bg-white text-stone-700'}">
-              <div class="w-5 h-5 rounded flex items-center justify-center border-2 ${isSel ? 'bg-bronze-500 border-bronze-500 text-white' : 'border-stone-300 bg-white'}">
-                ${isSel ? '<i data-lucide="check" class="w-3 h-3"></i>' : ''}
-              </div>
-              ${opt.text}
-            </button>
-          `;
-        }).join('') + `</div>`;
-      }
-      else if (q.type === 'dropdown') {
-        inputHtml = `
-          <div class="mt-4">
-            <select onchange="handleInput('single', this.value)" ${state.showFeedback ? 'disabled' : ''}
-              class="w-full p-3 border-2 border-stone-300 rounded-lg text-lg focus:border-bronze-500 outline-none bg-white">
-              <option value="" disabled ${!ans ? 'selected' : ''}>Selecione uma opção...</option>
-              ${q.options.map(opt => `<option value="${opt.id}" ${ans === opt.id ? 'selected' : ''}>${opt.text}</option>`).join('')}
-            </select>
-          </div>
-        `;
-      }
-      else if (q.type === 'matching') {
-        const matches = ans || {};
-        inputHtml = `<div class="space-y-4">` + q.matchingPairs.map(pair => `
-          <div class="bg-white p-4 rounded-lg border border-stone-200 shadow-sm flex flex-col sm:flex-row items-center gap-4 justify-between">
-            <div class="font-semibold text-stone-800 flex-1">${pair.left}</div>
-            <i data-lucide="arrow-right" class="text-stone-400 hidden sm:block"></i>
-            <select onchange="handleInput('matching', {left: '${pair.left}', right: this.value})" ${state.showFeedback ? 'disabled' : ''}
-              class="flex-1 p-2 border border-stone-300 rounded bg-stone-50">
-              <option value="" disabled ${!matches[pair.left] ? 'selected' : ''}>Selecionar...</option>
-              ${pair.rightOptions.map(opt => `<option value="${opt}" ${matches[pair.left] === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-            </select>
-          </div>
-        `).join('') + `</div>`;
-      }
-      else if (q.type === 'ordering') {
-        const currentOrder = ans || [];
-        const remaining = q.options.filter(o => !currentOrder.includes(o.id));
-        inputHtml = `
-          <div class="space-y-4">
-            <div class="bg-stone-100 p-4 rounded-lg min-h-[100px] border-2 border-dashed border-stone-300">
-              <p class="text-xs text-stone-500 mb-2 font-bold uppercase">Sua Ordem:</p>
-              ${currentOrder.length === 0 ? '<p class="text-stone-400 italic text-sm">Clique nas opções abaixo para ordenar</p>' : ''}
-              <div class="space-y-2">
-                ${currentOrder.map((id, idx) => {
-                  const opt = q.options.find(o => o.id === id);
-                  return `
-                    <div class="bg-white p-3 rounded shadow-sm border border-stone-200 flex justify-between items-center cursor-pointer" 
-                         onclick="${!state.showFeedback ? `handleInput('ordering_remove', '${id}')` : ''}">
-                      <div class="flex items-center">
-                        <span class="font-bold text-bronze-600 mr-3">${idx + 1}.</span>
-                        <span>${opt.text}</span>
-                      </div>
-                      ${!state.showFeedback ? '<i data-lucide="x" class="w-4 h-4 text-red-500"></i>' : ''}
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-            <div class="grid grid-cols-1 gap-2">
-              ${remaining.map(opt => `
-                <button onclick="handleInput('ordering_add', '${opt.id}')" ${state.showFeedback ? 'disabled' : ''}
-                  class="p-3 bg-white border border-stone-200 rounded hover:bg-stone-50 text-left w-full flex justify-between">
-                  ${opt.text} <i data-lucide="plus" class="w-4 h-4 text-stone-400"></i>
-                </button>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      }
-
-      // Hint UI
-      let hintsHtml = '';
-      if (state.mode === 'study' && !state.showFeedback) {
-        hintsHtml = `
-          <div class="mb-6 flex gap-2">
-            <div class="text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${state.hintLevel >= 1 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-400'}">
-              <i data-lucide="lightbulb" class="w-3 h-3"></i> Dica 1 <span class="hint-counter" data-limit="30">${state.hintLevel < 1 ? `(${30 - state.hintTimer}s)` : ''}</span>
-            </div>
-            <div class="text-xs px-3 py-1 rounded-full flex items-center gap-1 transition-colors ${state.hintLevel >= 2 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-400'}">
-              <i data-lucide="lightbulb" class="w-3 h-3"></i> Dica 2 <span class="hint-counter" data-limit="60">${state.hintLevel < 2 && state.hintLevel >= 1 ? `(${60 - state.hintTimer}s)` : ''}</span>
-            </div>
-          </div>
-          ${state.hintLevel >= 1 ? `
-            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-sm text-stone-700 animate-fade-in">
-              <strong class="text-amber-700 block mb-1">💡 Dica:</strong>
-              ${state.hintLevel === 1 ? q.hintLevel1 : q.hintLevel2}
-            </div>
-          ` : ''}
-        `;
-      }
-
-      // Feedback UI
-      let feedbackHtml = '';
-      if (state.showFeedback) {
-        feedbackHtml = `
-          <div class="mt-6 p-6 rounded-xl border-l-4 shadow-lg animate-fade-in ${state.feedbackCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}">
-            <div class="flex items-start gap-4">
-              <div class="mt-1">
-                <i data-lucide="${state.feedbackCorrect ? 'check-circle' : 'x-circle'}" class="w-8 h-8 ${state.feedbackCorrect ? 'text-green-600' : 'text-red-600'}"></i>
-              </div>
-              <div class="flex-1">
-                <h3 class="text-lg font-bold mb-2 ${state.feedbackCorrect ? 'text-green-800' : 'text-red-800'}">
-                  ${state.feedbackCorrect ? 'Correto! Muito bem!' : 'Incorreto.'}
-                </h3>
-                <div class="bg-white/60 p-4 rounded-lg mt-2">
-                  <div class="flex items-center gap-2 mb-2 text-stone-700 font-semibold">
-                    <i data-lucide="lightbulb" class="w-5 h-5 text-amber-500"></i> <span>Explicação:</span>
+          <div className="p-8 overflow-y-auto custom-scrollbar space-y-8">
+            <section>
+              <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Modos de Jogo</h3>
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <span className="text-2xl">📖</span>
+                  <div>
+                    <p className="font-bold text-stone-800">Modo Estudo</p>
+                    <p className="text-sm text-stone-500">Pratica as 45 questões. Tens dicas aos 30 e 60 segundos. Podes navegar livremente e corrigir erros no final.</p>
                   </div>
-                  <p class="text-stone-700 leading-relaxed">${q.explanation}</p>
                 </div>
-                <button onclick="nextQuestion()" class="mt-4 px-6 py-2 rounded-lg font-bold text-white shadow-md transition-transform active:scale-95 ${state.feedbackCorrect ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}">
-                  ${state.currentQuestionIndex === total - 1 ? 'Ver Resultados' : 'Próxima Questão →'}
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
-      const content = `
-        <div class="max-w-3xl mx-auto px-4 py-8 animate-fade-in">
-          <div class="flex justify-between items-end mb-4">
-            <span class="text-xs font-bold text-bronze-600 tracking-wider uppercase bg-bronze-50 px-2 py-1 rounded">${q.topic}</span>
-            <span class="text-sm font-medium text-stone-500">Questão ${state.currentQuestionIndex + 1} de ${total}</span>
-          </div>
-          <div class="w-full h-3 bg-stone-200 rounded-full overflow-hidden mb-6">
-            <div class="h-full bg-bronze-500 transition-all duration-500 ease-out" style="width: ${progress}%"></div>
-          </div>
-          <div class="bg-white rounded-2xl shadow-xl border border-stone-200 overflow-hidden">
-             ${q.image ? `<div class="w-full h-48 bg-stone-100 overflow-hidden relative"><img src="${q.image}" class="w-full h-full object-cover"></div>` : ''}
-             <div class="p-6 md:p-8">
-               <h2 class="text-xl md:text-2xl font-serif font-bold text-stone-800 mb-6 leading-relaxed">${q.prompt}</h2>
-               ${hintsHtml}
-               <div class="animate-slide-up">${inputHtml}</div>
-               ${feedbackHtml}
-             </div>
-          </div>
-          ${!state.showFeedback ? `
-            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 p-4 shadow-lg z-30">
-              <div class="max-w-3xl mx-auto flex justify-between items-center">
-                <button onclick="state.currentQuestionIndex--; renderQuiz()" ${state.currentQuestionIndex === 0 ? 'disabled' : ''} class="px-4 py-2 text-stone-600 hover:bg-stone-100 rounded-lg disabled:opacity-50">Anterior</button>
-                <button onclick="submitAnswer()" ${!ans ? 'disabled' : ''} class="px-6 py-2 bg-bronze-500 hover:bg-bronze-600 text-white rounded-lg font-medium shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-                   ${state.mode === 'study' ? 'Verificar' : (state.currentQuestionIndex === total - 1 ? 'Terminar' : 'Próxima')}
-                </button>
-              </div>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      
-      document.getElementById('app').innerHTML = renderHeader() + content;
-      lucideInit();
-    }
-
-    function handleInput(type, value) {
-      if (state.showFeedback) return;
-      const qId = state.activeQuestions[state.currentQuestionIndex].id;
-      
-      if (type === 'single') {
-        state.userAnswers[qId] = value;
-      } else if (type === 'multi') {
-        const current = state.userAnswers[qId] || [];
-        if (current.includes(value)) state.userAnswers[qId] = current.filter(id => id !== value);
-        else state.userAnswers[qId] = [...current, value];
-      } else if (type === 'matching') {
-        const current = state.userAnswers[qId] || {};
-        state.userAnswers[qId] = { ...current, [value.left]: value.right };
-      } else if (type === 'ordering_add') {
-        const current = state.userAnswers[qId] || [];
-        state.userAnswers[qId] = [...current, value];
-      } else if (type === 'ordering_remove') {
-        const current = state.userAnswers[qId] || [];
-        state.userAnswers[qId] = current.filter(id => id !== value);
-      }
-      
-      renderQuiz();
-    }
-
-    function renderDashboard() {
-      // Logic for chart data
-      const topicStats = Object.entries(state.stats.topicPerformance).map(([name, s]) => ({
-        name: name.replace('Comunidades ', '').replace('Povos ', ''),
-        pct: s.total > 0 ? Math.round((s.correct / s.total) * 100) : 0,
-        total: s.total
-      }));
-
-      // Badges
-      const badgesHtml = BADGES.map(b => {
-        const earned = state.stats.badges.includes(b.id);
-        return `
-          <div class="flex flex-col items-center p-4 rounded-xl border-2 transition-all group relative ${earned ? 'bg-amber-50 border-amber-400 shadow-md opacity-100' : 'bg-stone-50 border-stone-200 grayscale opacity-60'}">
-            <div class="text-4xl mb-2">${b.icon}</div>
-            <span class="font-bold text-center text-sm text-stone-800">${b.name}</span>
-            ${earned ? '<span class="text-xs text-amber-600 font-bold mt-1">Conquistado!</span>' : ''}
-            <div class="absolute opacity-0 group-hover:opacity-100 bottom-full mb-2 bg-stone-800 text-white text-xs p-2 rounded shadow-lg pointer-events-none w-40 text-center z-10 transition-opacity">
-               ${b.description}
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      // CSS Chart
-      const chartHtml = topicStats.length > 0 ? `
-        <div class="space-y-4">
-          ${topicStats.map(stat => `
-            <div>
-              <div class="flex justify-between text-xs font-bold text-stone-600 mb-1">
-                <span>${stat.name}</span>
-                <span>${stat.pct}%</span>
-              </div>
-              <div class="h-4 bg-stone-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full ${stat.pct > 75 ? 'bg-green-500' : stat.pct > 40 ? 'bg-amber-500' : 'bg-red-500'}" style="width: ${stat.pct}%"></div>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      ` : '<p class="text-stone-400 text-center py-8">Completa um quiz para ver dados.</p>';
-
-      const content = `
-        <main class="max-w-5xl mx-auto px-4 py-8 animate-fade-in">
-          <div class="flex justify-between items-center mb-6">
-            <button onclick="goHome()" class="flex items-center text-stone-600 hover:text-bronze-600 font-medium">
-              <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Voltar ao Menu
-            </button>
-            ${state.lastWrongIds.length > 0 ? `
-              <button onclick="startQuiz('study', true)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow-md flex items-center">
-                <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i> Rever ${state.lastWrongIds.length} Erros
-              </button>
-            ` : ''}
-          </div>
-
-          <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-              <h3 class="text-stone-500 text-sm font-bold uppercase mb-2">Pontuação Total</h3>
-              <p class="text-4xl font-serif font-bold text-bronze-600">${state.stats.totalScore}</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-              <h3 class="text-stone-500 text-sm font-bold uppercase mb-2">Jogos Completos</h3>
-              <p class="text-4xl font-serif font-bold text-stone-800">${state.stats.gamesPlayed}</p>
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-              <h3 class="text-stone-500 text-sm font-bold uppercase mb-2">Badges</h3>
-              <p class="text-4xl font-serif font-bold text-amber-500">${state.stats.badges.length}/${BADGES.length}</p>
-            </div>
-          </div>
-
-          <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-              <h3 class="font-serif font-bold text-xl mb-6">Desempenho por Tema</h3>
-              ${chartHtml}
-            </div>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
-              <h3 class="font-serif font-bold text-xl mb-6">Conquistas</h3>
-              <div class="grid grid-cols-2 gap-4">${badgesHtml}</div>
-            </div>
-          </div>
-        </main>
-      `;
-
-      document.getElementById('app').innerHTML = renderHeader() + content;
-      lucideInit();
-    }
-
-    function renderGuide() {
-      if (!state.isGuideOpen) return '';
-      return `
-        <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div class="absolute inset-0 bg-stone-900/50 backdrop-blur-sm" onclick="toggleGuide(false)"></div>
-          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-in border border-stone-200">
-            <div class="sticky top-0 bg-white border-b border-stone-100 p-4 flex justify-between items-center z-10">
-              <h2 class="text-xl font-serif font-bold text-stone-800 flex items-center gap-2">
-                <i data-lucide="help-circle" class="text-bronze-600"></i> Guia do Utilizador
-              </h2>
-              <button onclick="toggleGuide(false)"><i data-lucide="x" class="w-6 h-6 text-stone-500"></i></button>
-            </div>
-            <div class="p-6 space-y-6">
-              <section>
-                <h3 class="font-bold text-stone-800 mb-2 flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4 text-bronze-500"></i> Modos</h3>
-                <div class="text-sm text-stone-600 space-y-2">
-                  <p><strong>Modo Estudo:</strong> Sem tempo, feedback imediato e dicas automáticas após 30s/60s.</p>
-                  <p><strong>Modo Teste:</strong> 10 minutos para responder a tudo. Resultados apenas no fim.</p>
+                <div className="flex gap-4">
+                  <span className="text-2xl">⏱️</span>
+                  <div>
+                    <p className="font-bold text-stone-800">Modo Teste</p>
+                    <p className="text-sm text-stone-500">Um desafio real: 20 questões aleatórias e 10 minutos no cronómetro. Sem dicas!</p>
+                  </div>
                 </div>
-              </section>
-              <section>
-                <h3 class="font-bold text-stone-800 mb-2 flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-500"></i> Progresso</h3>
-                <p class="text-sm text-stone-600">Acompanha a tua evolução no gráfico de barras, que mostra a percentagem de acerto por cada tema histórico.</p>
-              </section>
-            </div>
-            <div class="p-4 border-t border-stone-100 flex justify-end">
-              <button onclick="toggleGuide(false)" class="px-4 py-2 bg-bronze-500 text-white rounded-lg">Entendido</button>
-            </div>
+              </div>
+            </section>
+            <section>
+              <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Sistema de Dicas</h3>
+              <p className="text-sm text-stone-600 leading-relaxed">No modo Estudo, se tiveres dificuldade, aguarda. A <strong>Dica 1</strong> aparece aos 30s e a <strong>Dica 2</strong> aos 60s para te orientar.</p>
+            </section>
+            <section>
+              <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Correção de Erros</h3>
+              <p className="text-sm text-stone-600 leading-relaxed">Após terminar um lote de questões, a app identifica onde falhaste. Podes escolher "Corrigir Erros" para repetir apenas as questões erradas até acertares tudo!</p>
+            </section>
+            <section>
+              <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Pontuação e Medalhas</h3>
+              <p className="text-sm text-stone-600 leading-relaxed">Cada acerto dá pontos. Acumula pontos para subir no Dashboard e desbloquear os 4 Badges de conquista.</p>
+            </section>
+          </div>
+          <div className="p-8 border-t border-stone-100 bg-stone-50 flex justify-end">
+            <button onClick={onClose} className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg transition-all">Começar a Aprender</button>
           </div>
         </div>
-      `;
-    }
+      </div>
+    );
 
-    function toggleGuide(isOpen) {
-      state.isGuideOpen = isOpen;
-      // Re-render apenas o guide overlay se possível, mas aqui renderApp é mais simples
-      const guideContainer = document.getElementById('guide-container');
-      if (guideContainer) {
-        guideContainer.innerHTML = renderGuide();
-        lucideInit();
-      } else {
-        renderApp();
-      }
-    }
+    const App = () => {
+      const [view, setView] = useState('HOME');
+      const [stats, setStats] = useState(() => {
+        const saved = localStorage.getItem('cronos_v7_stats');
+        return saved ? JSON.parse(saved) : { totalScore: 0, gamesPlayed: 0, badges: [], history: [], topicPerformance: {} };
+      });
+      const [showGuide, setShowGuide] = useState(false);
 
-    // ==========================================
-    // 6. LOOP PRINCIPAL
-    // ==========================================
+      const [testTime, setTestTime] = useState(600);
+      const [activeQuestions, setActiveQuestions] = useState([]);
+      const [selectedTopics, setSelectedTopics] = useState([]);
 
-    function renderApp() {
-      const app = document.getElementById('app');
-      // Renderizar o conteúdo base
-      if (state.view === 'home') app.innerHTML = renderHeader() + renderHome();
-      else if (state.view === 'quiz') renderQuiz(); // quiz renderiza tudo
-      else if (state.view === 'dashboard') renderDashboard(); // dashboard renderiza tudo
-      
-      // Injetar o Modal do Guia (sempre presente no DOM mas condicionalmente visível)
-      let guideDiv = document.getElementById('guide-container');
-      if (!guideDiv) {
-        guideDiv = document.createElement('div');
-        guideDiv.id = 'guide-container';
-        document.body.appendChild(guideDiv);
-      }
-      guideDiv.innerHTML = renderGuide();
-      
-      lucideInit();
-    }
+      useEffect(() => { localStorage.setItem('cronos_v7_stats', JSON.stringify(stats)); }, [stats]);
 
-    // Inicialização
-    renderApp();
-    
+      useEffect(() => {
+        let timer;
+        if (view === 'TEST' && testTime > 0) {
+          timer = setInterval(() => setTestTime(p => p - 1), 1000);
+        } else if (testTime === 0 && view === 'TEST') {
+          setView('DASHBOARD');
+        }
+        return () => clearInterval(timer);
+      }, [view, testTime]);
+
+      const startMode = (mode) => {
+        if (mode === 'STUDY') {
+          setActiveQuestions([...QUESTIONS_DATA].sort(() => Math.random() - 0.5));
+        } else if (mode === 'TEST') {
+          setActiveQuestions([...QUESTIONS_DATA].sort(() => Math.random() - 0.5).slice(0, 20));
+          setTestTime(600);
+        }
+        setView(mode);
+      };
+
+      const handleQuizComplete = (results) => {
+        setStats(prev => {
+          const next = { ...prev };
+          next.totalScore = (prev.totalScore || 0) + results.score;
+          next.gamesPlayed = (prev.gamesPlayed || 0) + 1;
+          next.history.push({ date: new Date().toLocaleDateString(), score: results.score, total: results.total });
+          
+          results.correctIds.forEach(cid => {
+            const q = QUESTIONS_DATA.find(qu => qu.id === cid);
+            if (q) {
+              if (!next.topicPerformance[q.topic]) next.topicPerformance[q.topic] = { correct: 0, total: 0 };
+              next.topicPerformance[q.topic].total += 1;
+              next.topicPerformance[q.topic].correct += 1;
+            }
+          });
+
+          // Badge logic
+          const earnedBadges = [...next.badges];
+          if (results.correct >= 5 && !earnedBadges.includes('novice')) earnedBadges.push('novice');
+          if (next.totalScore >= 500 && !earnedBadges.includes('expert')) earnedBadges.push('expert');
+          if (results.isPerfect && view === 'TEST' && !earnedBadges.includes('perfect')) earnedBadges.push('perfect');
+          if (results.streak >= 5 && !earnedBadges.includes('streak')) earnedBadges.push('streak');
+          next.badges = earnedBadges;
+
+          return next;
+        });
+        setView('DASHBOARD');
+      };
+
+      const BadgeIcon = ({ id, earned }) => {
+        const b = BADGES_CONFIG.find(bc => bc.id === id);
+        return (
+          <div className={`p-6 rounded-[2rem] border-2 flex flex-col items-center gap-3 transition-all relative group ${earned ? 'bg-amber-50 border-amber-200 shadow-sm' : 'bg-stone-50 border-stone-100 grayscale opacity-40'}`}>
+            <span className="text-5xl">{b.icon}</span>
+            <div className="text-center">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-stone-900 block">{b.name}</span>
+            </div>
+            {earned && (
+              <div className="absolute inset-0 bg-stone-900/90 rounded-[1.9rem] opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-white text-center">
+                <p className="text-xs font-bold mb-1">{b.name}</p>
+                <p className="text-[10px] opacity-80">{b.description}</p>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      return (
+        <div className="min-h-screen bg-stone-50 pb-24">
+          {showGuide && <UserGuide onClose={() => setShowGuide(false)} />}
+          
+          <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200 px-6 py-4 shadow-sm flex justify-between items-center">
+            <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('HOME')}>
+              <div className="bg-amber-600 p-2.5 rounded-xl text-white shadow-lg group-hover:bg-amber-700 transition-colors">⏳</div>
+              <div>
+                <h1 className="font-serif font-bold text-2xl text-stone-900 leading-none">Cronos</h1>
+                <p className="text-[10px] uppercase tracking-widest text-stone-500 font-bold">História Ibérica</p>
+              </div>
+            </div>
+            {view === 'TEST' && <div className="bg-red-50 text-red-700 px-5 py-2 rounded-full font-mono font-bold border border-red-200 animate-pulse">{Math.floor(testTime/60)}:{(testTime%60).toString().padStart(2, '0')}</div>}
+            <div className="flex gap-4">
+              <button onClick={() => setShowGuide(true)} className="text-amber-600 hover:bg-amber-50 px-4 py-2 rounded-xl text-sm font-bold transition-all border border-amber-200">Guia 📖</button>
+              <button onClick={() => setView('DASHBOARD')} className="text-stone-600 hover:text-amber-600 font-bold transition-colors">📊 Dashboard</button>
+              <button onClick={() => setView('HOME')} className="bg-stone-100 hover:bg-stone-200 px-5 py-2 rounded-xl text-sm font-bold transition-all">Menu</button>
+            </div>
+          </header>
+
+          <main className="animate-fade-in">
+            {view === 'HOME' && (
+              <div className="max-w-6xl mx-auto px-6 py-20 text-center">
+                <h2 className="text-6xl sm:text-8xl font-serif font-bold text-stone-900 mb-8 leading-[0.9]">Primeiras Comunidades <br/><span className="text-amber-600">da Península Ibérica</span></h2>
+                <p className="text-xl text-stone-500 max-w-2xl mx-auto mb-20 font-medium font-serif">Prepara-te para o teste de História com {QUESTIONS_DATA.length} desafios pedagógicos completos. Explora a vida dos caçadores-recoletores, a arte rupestre, e a chegada dos povos mediterrâneos.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  <button onClick={() => startMode('STUDY')} className="bg-white p-10 rounded-[2.5rem] border border-stone-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-left group">
+                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">📖</div>
+                    <h3 className="text-2xl font-bold mb-3">Modo Estudo</h3>
+                    <p className="text-stone-500 text-sm leading-relaxed">Navegação livre, dicas e correção de erros focado em dominar o conteúdo.</p>
+                  </button>
+                  <button onClick={() => startMode('TEST')} className="bg-white p-10 rounded-[2.5rem] border border-stone-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-left group">
+                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">⏱️</div>
+                    <h3 className="text-2xl font-bold mb-3">Modo Teste</h3>
+                    <p className="text-stone-500 text-sm leading-relaxed">Prova de fogo: 20 questões aleatórias sob pressão de tempo para avaliação.</p>
+                  </button>
+                  <button onClick={() => setView('CUSTOM_SETUP')} className="bg-white p-10 rounded-[2.5rem] border border-stone-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-left group">
+                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">🛠️</div>
+                    <h3 className="text-2xl font-bold mb-3">Personalizado</h3>
+                    <p className="text-stone-500 text-sm leading-relaxed">Escolhe temas específicos para treinar as tuas dificuldades.</p>
+                  </button>
+                  <button onClick={() => setView('DASHBOARD')} className="bg-white p-10 rounded-[2.5rem] border border-stone-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-left group">
+                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">📊</div>
+                    <h3 className="text-2xl font-bold mb-3">Dashboard</h3>
+                    <p className="text-stone-500 text-sm leading-relaxed">Vê o teu progresso detalhado e conquistas acumuladas.</p>
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {view === 'CUSTOM_SETUP' && (
+              <div className="max-w-4xl mx-auto px-6 py-16">
+                <div className="bg-white p-12 rounded-[3rem] border border-stone-200 shadow-2xl">
+                  <h2 className="text-4xl font-serif font-bold mb-10 text-stone-900">🛠️ Escolher Temas de Treino</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-12">
+                    {TOPICS.map(topic => (
+                      <label key={topic} className={`flex items-center gap-5 p-6 rounded-3xl border-2 cursor-pointer transition-all ${selectedTopics.includes(topic) ? 'border-amber-600 bg-amber-50 shadow-md' : 'border-stone-100 hover:border-amber-200 bg-stone-50'}`}>
+                        <input type="checkbox" checked={selectedTopics.includes(topic)} onChange={e => e.target.checked ? setSelectedTopics([...selectedTopics, topic]) : setSelectedTopics(selectedTopics.filter(t => t !== topic))} className="w-6 h-6 accent-amber-600"/>
+                        <span className="font-bold text-stone-800">{topic}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="flex gap-4">
+                    <button onClick={() => setView('HOME')} className="flex-1 bg-stone-100 hover:bg-stone-200 py-5 rounded-2xl font-bold text-stone-600">Cancelar</button>
+                    <button disabled={selectedTopics.length === 0} onClick={() => { setActiveQuestions(QUESTIONS_DATA.filter(q => selectedTopics.includes(q.topic)).sort(() => Math.random() - 0.5)); setView('CUSTOM_QUIZ'); }} className="flex-[2] bg-amber-600 hover:bg-amber-700 text-white py-5 rounded-2xl font-bold shadow-lg disabled:opacity-50">Iniciar Treino</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {view === 'DASHBOARD' && (
+              <div className="max-w-6xl mx-auto px-6 py-16">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                  <div className="lg:col-span-1 space-y-10">
+                    <div className="bg-amber-600 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-4 text-white/10 text-9xl font-serif">⏳</div>
+                      <p className="text-amber-100 font-bold uppercase tracking-widest text-xs mb-3">Pontuação Total</p>
+                      <h3 className="text-7xl font-serif font-bold">{stats.totalScore}</h3>
+                      <div className="mt-8 flex gap-6">
+                        <div><p className="text-xs font-bold uppercase text-amber-200">Jogos</p><p className="text-2xl font-bold">{stats.gamesPlayed}</p></div>
+                        <div className="w-px h-10 bg-white/20"></div>
+                        <div><p className="text-xs font-bold uppercase text-amber-200">Questões</p><p className="text-2xl font-bold">{QUESTIONS_DATA.length}</p></div>
+                      </div>
+                    </div>
+                    <div className="bg-white p-10 rounded-[3rem] border border-stone-200 shadow-sm">
+                      <h4 className="font-bold text-stone-900 mb-8 flex items-center gap-3">🏆 Badges Conquistados</h4>
+                      <div className="grid grid-cols-2 gap-6">
+                        {BADGES_CONFIG.map(bc => <BadgeIcon key={bc.id} id={bc.id} earned={stats.badges.includes(bc.id)} />)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="lg:col-span-2 bg-white p-12 rounded-[3rem] border border-stone-200 shadow-sm h-full">
+                    <h4 className="text-2xl font-serif font-bold text-stone-900 mb-10">Performance por Tema</h4>
+                    <div className="space-y-10 text-stone-600">
+                      {TOPICS.map(topic => {
+                        const p = stats.topicPerformance[topic] || { correct: 0, total: 1 };
+                        const score = Math.round((p.correct/p.total)*100);
+                        return (
+                          <div key={topic} className="group">
+                            <div className="flex justify-between text-xs font-bold uppercase mb-3 text-stone-500 group-hover:text-amber-600 transition-colors">
+                              <span>{topic}</span>
+                              <span className="bg-stone-100 px-2 py-1 rounded">{score}%</span>
+                            </div>
+                            <div className="w-full bg-stone-100 h-6 rounded-full overflow-hidden p-1 shadow-inner">
+                              <div className="bg-amber-600 h-full rounded-full transition-all duration-1000" style={{width: `${score}%`}}></div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {(['STUDY', 'TEST', 'CUSTOM_QUIZ'].includes(view)) && (
+              <Quiz questions={activeQuestions} mode={view === 'TEST' ? 'test' : 'study'} onComplete={handleQuizComplete} />
+            )}
+          </main>
+          
+          <footer className="fixed bottom-0 left-0 right-0 p-6 flex justify-center pointer-events-none">
+            <div className="bg-white/90 backdrop-blur-xl px-10 py-4 rounded-[2rem] border border-stone-200 shadow-2xl pointer-events-auto flex items-center gap-10">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Global</span>
+                <span className="font-serif font-bold text-2xl text-amber-700">{stats.totalScore}</span>
+              </div>
+              <div className="w-px h-8 bg-stone-200"></div>
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Modo</span>
+                <span className="font-serif font-bold text-2xl text-stone-800 uppercase">
+                  {view === 'TEST' ? 'Teste' : (view === 'STUDY' ? 'Estudo' : (view === 'HOME' ? 'Menu' : 'Treino'))}
+                </span>
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
