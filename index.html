@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
@@ -28,6 +26,7 @@
   <script type="text/babel">
     const { useState, useEffect, useMemo, useCallback } = React;
 
+    // Definições dos Badges conforme solicitado
     const BADGES_CONFIG = [
       { id: 'novice', name: 'Arqueólogo Iniciante', icon: '🏺', description: 'Completa 5 questões corretamente.' },
       { id: 'expert', name: 'Historiador Expert', icon: '📜', description: 'Acumula mais de 500 pontos.' },
@@ -910,22 +909,49 @@
                 </div>
               </div>
             </section>
+            
+            <section>
+              <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Progresso Guardado</h3>
+              <p className="text-sm text-stone-600 leading-relaxed">Não te preocupes em perder os teus pontos! O Cronos guarda automaticamente o teu progresso, pontuações e medalhas neste dispositivo. Podes fechar a página e voltar mais tarde que a tua história continua.</p>
+            </section>
+
+            <section>
+              <h3 className="text-lg font-bold text-amber-700 mb-4 uppercase tracking-widest text-xs">Medalhas e Conquistas</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
+                  <span className="text-2xl">🏺</span>
+                  <div>
+                    <p className="font-bold text-xs uppercase text-amber-800">Arqueólogo Iniciante</p>
+                    <p className="text-[10px] text-stone-500">Completa 5 questões corretamente.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
+                  <span className="text-2xl">📜</span>
+                  <div>
+                    <p className="font-bold text-xs uppercase text-amber-800">Historiador Expert</p>
+                    <p className="text-[10px] text-stone-500">Acumula mais de 500 pontos totais.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
+                  <span className="text-2xl">🎯</span>
+                  <div>
+                    <p className="font-bold text-xs uppercase text-amber-800">Perfeccionista</p>
+                    <p className="text-[10px] text-stone-500">Acerta 100% num modo de teste.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-stone-50 rounded-xl border border-stone-100">
+                  <span className="text-2xl">🔥</span>
+                  <div>
+                    <p className="font-bold text-xs uppercase text-amber-800">Em Chamas</p>
+                    <p className="text-[10px] text-stone-500">Acerta 5 questões seguidas.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <section>
               <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Sistema de Dicas</h3>
               <p className="text-sm text-stone-600 leading-relaxed">No modo Estudo, se tiveres dificuldade, aguarda. A <strong>Dica 1</strong> aparece aos 30s e a <strong>Dica 2</strong> aos 60s para te orientar.</p>
-            </section>
-            <section>
-              <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Correção de Erros</h3>
-              <p className="text-sm text-stone-600 leading-relaxed">Após terminar um lote de questões, a app identifica onde falhaste. Podes escolher "Corrigir Erros" para repetir apenas as questões erradas até acertares tudo!</p>
-            </section>
-            <section>
-              <h3 className="text-lg font-bold text-amber-700 mb-2 uppercase tracking-widest text-xs">Pontuação e Medalhas</h3>
-              <p className="text-sm text-stone-600 leading-relaxed">Cada acerto dá pontos. Acumula pontos para subir no Dashboard e desbloquear os 4 Badges de conquista.</p>
-              <p className="text-sm text-stone-600 leading-relaxed"><b>Tipo de Medalhas (BADGES) e como obter:</b></p>
-              <p className="text-sm text-stone-600 leading-relaxed">'Arqueólogo Iniciante', icon '🏺', completa 5 questões corretamente.</p>
-              <p className="text-sm text-stone-600 leading-relaxed">'Historiador Expert', icon '📜', acumula mais de 500 pontos.</p>
-              <p className="text-sm text-stone-600 leading-relaxed">'Perfeccionista', icon '🎯', acerta 100% no modo de teste.</p>
-              <p className="text-sm text-stone-600 leading-relaxed">'Em Chamas', icon '🔥', acerta 5 questões seguidas.</p>
             </section>
           </div>
           <div className="p-8 border-t border-stone-100 bg-stone-50 flex justify-end">
@@ -937,8 +963,9 @@
 
     const App = () => {
       const [view, setView] = useState('HOME');
+      // Atualizado para cronos_v8_stats para garantir persistência limpa com novos badges
       const [stats, setStats] = useState(() => {
-        const saved = localStorage.getItem('cronos_v7_stats');
+        const saved = localStorage.getItem('cronos_v8_stats');
         return saved ? JSON.parse(saved) : { totalScore: 0, gamesPlayed: 0, badges: [], history: [], topicPerformance: {} };
       });
       const [showGuide, setShowGuide] = useState(false);
@@ -947,7 +974,7 @@
       const [activeQuestions, setActiveQuestions] = useState([]);
       const [selectedTopics, setSelectedTopics] = useState([]);
 
-      useEffect(() => { localStorage.setItem('cronos_v7_stats', JSON.stringify(stats)); }, [stats]);
+      useEffect(() => { localStorage.setItem('cronos_v8_stats', JSON.stringify(stats)); }, [stats]);
 
       useEffect(() => {
         let timer;
@@ -985,7 +1012,7 @@
             }
           });
 
-          // Badge logic
+          // Lógica de Badges Atualizada
           const earnedBadges = [...next.badges];
           if (results.correct >= 5 && !earnedBadges.includes('novice')) earnedBadges.push('novice');
           if (next.totalScore >= 500 && !earnedBadges.includes('expert')) earnedBadges.push('expert');
