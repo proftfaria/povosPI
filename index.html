@@ -26,7 +26,7 @@
   <script type="text/babel">
     const { useState, useEffect, useMemo, useCallback } = React;
 
-    // Definições dos Badges conforme solicitado
+    // Definições dos Badges
     const BADGES_CONFIG = [
       { id: 'novice', name: 'Arqueólogo Iniciante', icon: '🏺', description: 'Completa 5 questões corretamente.' },
       { id: 'expert', name: 'Historiador Expert', icon: '📜', description: 'Acumula mais de 500 pontos.' },
@@ -1066,8 +1066,8 @@
           <main className="animate-fade-in">
             {view === 'HOME' && (
               <div className="max-w-6xl mx-auto px-6 py-20 text-center">
-                <h2 className="text-6xl sm:text-8xl font-serif font-bold text-stone-900 mb-8 leading-[0.9]">Primeiras Comunidades <br/><span className="text-amber-600">da Península Ibérica</span></h2>
-                <p className="text-xl text-stone-500 max-w-2xl mx-auto mb-20 font-medium font-serif">Prepara-te com {QUESTIONS_DATA.length} desafios pedagógicos completos. Explora a vida dos caçadores-recoletores, a arte rupestre, e a chegada dos povos mediterrâneos.</p>
+                <h2 className="text-6xl sm:text-8xl font-serif font-bold text-stone-900 mb-8 leading-[0.9]">O Legado das <br/><span className="text-amber-600">Nossas Raízes.</span></h2>
+                <p className="text-xl text-stone-500 max-w-2xl mx-auto mb-20 font-medium font-serif">Domina a história da Península Ibérica com {QUESTIONS_DATA.length} desafios pedagógicos completos.</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                   <button onClick={() => startMode('STUDY')} className="bg-white p-10 rounded-[2.5rem] border border-stone-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-left group">
                     <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">📖</div>
@@ -1163,7 +1163,7 @@
             )}
           </main>
           
-          <footer className="fixed bottom-0 left-0 right-0 p-6 flex justify-center pointer-events-none">
+          <footer className="fixed bottom-0 left-0 right-0 p-4 flex flex-col items-center justify-end gap-3 pointer-events-none z-50">
             <div className="bg-white/90 backdrop-blur-xl px-10 py-4 rounded-[2rem] border border-stone-200 shadow-2xl pointer-events-auto flex items-center gap-10">
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Global</span>
@@ -1177,6 +1177,9 @@
                 </span>
               </div>
             </div>
+            <p className="text-[10px] font-serif font-bold text-stone-400 tracking-wide text-center bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">
+                Teodósio Faria ©2026 Guia de Estudo das Primeiras Comunidades da Península Ibérica
+            </p>
           </footer>
         </div>
       );
