@@ -1136,18 +1136,34 @@
                   </div>
                   <div className="lg:col-span-2 bg-white p-12 rounded-[3rem] border border-stone-200 shadow-sm h-full">
                     <h4 className="text-2xl font-serif font-bold text-stone-900 mb-10">Performance por Tema</h4>
-                    <div className="space-y-10 text-stone-600">
+                    <div className="space-y-8 text-stone-600">
                       {TOPICS.map(topic => {
-                        const p = stats.topicPerformance[topic] || { correct: 0, total: 1 };
-                        const score = Math.round((p.correct/p.total)*100);
+                        const p = stats.topicPerformance[topic];
+                        const correct = p ? p.correct : 0;
+                        const total = p ? p.total : 0;
+                        const incorrect = total - correct;
+                        const hasData = total > 0;
+                        const score = hasData ? Math.round((correct/total)*100) : 0;
+                        
                         return (
                           <div key={topic} className="group">
-                            <div className="flex justify-between text-xs font-bold uppercase mb-3 text-stone-500 group-hover:text-amber-600 transition-colors">
-                              <span>{topic}</span>
-                              <span className="bg-stone-100 px-2 py-1 rounded">{score}%</span>
+                            <div className="flex justify-between items-end mb-3">
+                              <div>
+                                <span className="text-xs font-bold uppercase text-stone-500 group-hover:text-amber-600 transition-colors block mb-1">{topic}</span>
+                                <div className="text-[10px] font-bold text-stone-400 bg-stone-100 px-3 py-1.5 rounded-full inline-block">
+                                  {hasData ? (
+                                    <span className="flex gap-2">
+                                      <span className="text-green-600">✔ {correct}</span>
+                                      <span className="text-stone-300">|</span>
+                                      <span className="text-red-500">✖ {incorrect}</span>
+                                    </span>
+                                  ) : '0/0'}
+                                </div>
+                              </div>
+                              <span className="text-2xl font-serif font-bold text-amber-600">{score}%</span>
                             </div>
-                            <div className="w-full bg-stone-100 h-6 rounded-full overflow-hidden p-1 shadow-inner">
-                              <div className="bg-amber-600 h-full rounded-full transition-all duration-1000" style={{width: `${score}%`}}></div>
+                            <div className="w-full bg-stone-100 h-4 rounded-full overflow-hidden p-0.5 shadow-inner">
+                              <div className="bg-amber-600 h-full rounded-full transition-all duration-1000 ease-out" style={{width: `${score}%`}}></div>
                             </div>
                           </div>
                         );
