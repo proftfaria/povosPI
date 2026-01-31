@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-PT">
 <head>
@@ -19,6 +18,12 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 10px; }
     .animate-slide-up { animation: slideUp 0.3s ease-out forwards; }
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; color: black; }
+      .print-container { box-shadow: none; border: 2px solid #000; margin: 0; padding: 20px; width: 100%; max-width: 100%; }
+    }
   </style>
 </head>
 <body class="bg-stone-50 text-stone-900">
@@ -384,7 +389,7 @@
           { id: "a", text: "Celtas", isCorrect: true }
         ],
         explanation: "Os Celtas dominavam a metalurgia do ferro, o que lhes permitia fazer armas e ferramentas mais resistentes.",
-        hintLevel1: "Pensa que povo tinha melhor tecnologia metalúrgica.",
+        hintLevel1: "Pensa em qual povo tinha melhor tecnologia metalúrgica.",
         hintLevel2: "O ferro é mais forte que o bronze."
       },
       {
@@ -964,7 +969,6 @@
 
     const App = () => {
       const [view, setView] = useState('HOME');
-      // Atualizado para cronos_v8_stats para garantir persistência limpa com novos badges
       const [stats, setStats] = useState(() => {
         const saved = localStorage.getItem('cronos_v8_stats');
         return saved ? JSON.parse(saved) : { totalScore: 0, gamesPlayed: 0, badges: [], history: [], topicPerformance: {} };
@@ -974,6 +978,11 @@
       const [testTime, setTestTime] = useState(600);
       const [activeQuestions, setActiveQuestions] = useState([]);
       const [selectedTopics, setSelectedTopics] = useState([]);
+      
+      // Novos estados para identificação do teste
+      const [userName, setUserName] = useState('');
+      const [showNameInput, setShowNameInput] = useState(false);
+      const [lastTestResult, setLastTestResult] = useState(null);
 
       useEffect(() => { localStorage.setItem('cronos_v8_stats', JSON.stringify(stats)); }, [stats]);
 
@@ -990,11 +999,19 @@
       const startMode = (mode) => {
         if (mode === 'STUDY') {
           setActiveQuestions([...QUESTIONS_DATA].sort(() => Math.random() - 0.5));
+          setView(mode);
         } else if (mode === 'TEST') {
           setActiveQuestions([...QUESTIONS_DATA].sort(() => Math.random() - 0.5).slice(0, 20));
           setTestTime(600);
+          setView(mode);
         }
-        setView(mode);
+      };
+      
+      const handleNameSubmit = () => {
+        if (userName.trim()) {
+           setShowNameInput(false);
+           startMode('TEST');
+        }
       };
 
       const handleQuizComplete = (results) => {
@@ -1023,7 +1040,13 @@
 
           return next;
         });
-        setView('DASHBOARD');
+
+        if (view === 'TEST') {
+            setLastTestResult({ ...results, date: new Date().toLocaleDateString(), studentName: userName });
+            setView('TEST_REPORT');
+        } else {
+            setView('DASHBOARD');
+        }
       };
 
       const BadgeIcon = ({ id, earned }) => {
@@ -1045,10 +1068,30 @@
       };
 
       return (
-        <div className="min-h-screen bg-stone-50 pb-24">
+        <div className="min-h-screen bg-stone-50 pb-24 print:pb-0 print:bg-white">
           {showGuide && <UserGuide onClose={() => setShowGuide(false)} />}
           
-          <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200 px-6 py-4 shadow-sm flex justify-between items-center">
+          {showNameInput && (
+            <div className="fixed inset-0 z-[110] bg-stone-900/80 backdrop-blur-sm flex items-center justify-center p-6">
+               <div className="bg-white p-8 rounded-3xl w-full max-w-md animate-slide-up shadow-2xl text-center">
+                  <h3 className="text-2xl font-serif font-bold mb-2">Identificação</h3>
+                  <p className="text-stone-500 mb-6">Insere o teu nome para o relatório final.</p>
+                  <input 
+                    type="text" 
+                    value={userName} 
+                    onChange={e => setUserName(e.target.value)}
+                    placeholder="Nome do Aluno" 
+                    className="w-full p-4 border-2 border-stone-200 rounded-xl mb-6 text-center text-lg font-bold focus:ring-2 focus:ring-amber-500 outline-none"
+                  />
+                  <div className="flex gap-4">
+                     <button onClick={() => setShowNameInput(false)} className="flex-1 py-3 text-stone-500 font-bold hover:bg-stone-100 rounded-xl">Cancelar</button>
+                     <button onClick={handleNameSubmit} disabled={!userName.trim()} className="flex-[2] bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-xl font-bold disabled:opacity-50">Começar Teste</button>
+                  </div>
+               </div>
+            </div>
+          )}
+          
+          <header className="no-print sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200 px-6 py-4 shadow-sm flex justify-between items-center">
             <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setView('HOME')}>
               <div className="bg-amber-600 p-2.5 rounded-xl text-white shadow-lg group-hover:bg-amber-700 transition-colors">⏳</div>
               <div>
@@ -1075,7 +1118,7 @@
                     <h3 className="text-2xl font-bold mb-3">Modo Estudo</h3>
                     <p className="text-stone-500 text-sm leading-relaxed">Navegação livre, dicas e correção de erros focado em dominar o conteúdo.</p>
                   </button>
-                  <button onClick={() => startMode('TEST')} className="bg-white p-10 rounded-[2.5rem] border border-stone-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-left group">
+                  <button onClick={() => { setUserName(''); setShowNameInput(true); }} className="bg-white p-10 rounded-[2.5rem] border border-stone-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all text-left group">
                     <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">⏱️</div>
                     <h3 className="text-2xl font-bold mb-3">Modo Teste</h3>
                     <p className="text-stone-500 text-sm leading-relaxed">Prova de fogo: 20 questões aleatórias sob pressão de tempo para avaliação.</p>
@@ -1091,6 +1134,50 @@
                     <p className="text-stone-500 text-sm leading-relaxed">Vê o teu progresso detalhado e conquistas acumuladas.</p>
                   </button>
                 </div>
+              </div>
+            )}
+            
+            {view === 'TEST_REPORT' && lastTestResult && (
+              <div className="max-w-4xl mx-auto px-6 py-16 print-container">
+                  <div className="bg-white p-16 rounded-[2rem] border-4 border-double border-stone-200 shadow-2xl text-center print:shadow-none print:border-4 print:border-black">
+                      <div className="mb-8">
+                         <span className="text-6xl">📜</span>
+                      </div>
+                      <h2 className="text-4xl font-serif font-bold text-stone-900 mb-2 uppercase tracking-wide">Relatório de Avaliação</h2>
+                      <p className="text-stone-500 mb-10">Cronos: História Ibérica</p>
+                      
+                      <div className="grid grid-cols-2 gap-8 text-left mb-12 border-t border-b border-stone-100 py-8 print:border-black">
+                          <div>
+                              <p className="text-xs uppercase font-bold text-stone-400 mb-1">Nome do Aluno</p>
+                              <p className="text-2xl font-serif font-bold">{lastTestResult.studentName}</p>
+                          </div>
+                          <div className="text-right">
+                              <p className="text-xs uppercase font-bold text-stone-400 mb-1">Data</p>
+                              <p className="text-2xl font-serif font-bold">{lastTestResult.date}</p>
+                          </div>
+                          <div>
+                              <p className="text-xs uppercase font-bold text-stone-400 mb-1">Questões Certas</p>
+                              <p className="text-2xl font-serif font-bold text-green-600">{lastTestResult.correct} / {lastTestResult.total}</p>
+                          </div>
+                          <div className="text-right">
+                              <p className="text-xs uppercase font-bold text-stone-400 mb-1">Pontuação Final</p>
+                              <p className="text-4xl font-serif font-bold text-amber-600">{lastTestResult.score} pts</p>
+                          </div>
+                      </div>
+
+                      <div className="mt-16 pt-8 border-t border-stone-300 w-64 mx-auto print:block hidden">
+                          <p className="text-xs uppercase font-bold text-stone-400">Assinatura do Professor</p>
+                      </div>
+
+                      <div className="flex justify-center gap-4 no-print">
+                          <button onClick={() => window.print()} className="bg-stone-800 hover:bg-black text-white px-8 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
+                             🖨️ Imprimir Relatório
+                          </button>
+                          <button onClick={() => setView('DASHBOARD')} className="bg-stone-100 hover:bg-stone-200 text-stone-600 px-8 py-3 rounded-xl font-bold transition-all">
+                             Continuar
+                          </button>
+                      </div>
+                  </div>
               </div>
             )}
             
@@ -1180,7 +1267,7 @@
             )}
           </main>
           
-          <footer className="fixed bottom-0 left-0 right-0 p-4 flex flex-col items-center justify-end gap-3 pointer-events-none z-50">
+          <footer className="no-print fixed bottom-0 left-0 right-0 p-4 flex flex-col items-center justify-end gap-3 pointer-events-none z-50">
             <div className="bg-white/90 backdrop-blur-xl px-10 py-4 rounded-[2rem] border border-stone-200 shadow-2xl pointer-events-auto flex items-center gap-10">
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Global</span>
@@ -1190,7 +1277,7 @@
               <div className="flex items-center gap-3">
                 <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Modo</span>
                 <span className="font-serif font-bold text-2xl text-stone-800 uppercase">
-                  {view === 'TEST' ? 'Teste' : (view === 'STUDY' ? 'Estudo' : (view === 'HOME' ? 'Menu' : 'Treino'))}
+                  {view === 'TEST' ? 'Teste' : (view === 'STUDY' ? 'Estudo' : (view === 'HOME' ? 'Menu' : (view === 'TEST_REPORT' ? 'Relatório' : 'Treino')))}
                 </span>
               </div>
             </div>
